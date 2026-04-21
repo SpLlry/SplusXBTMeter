@@ -1,0 +1,60 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:BTBatteryDisplayApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    x:Class="BTBatteryDisplayApp.SettingWindow"
+    mc:Ignorable="d"
+    Icon="app.ico"
+    Title="设置" Height="506" Width="400"
+    HorizontalAlignment="Center"
+    WindowStartupLocation="CenterScreen">
+    <!-- 新增：窗口默认屏幕居中 -->
+    <!-- 修复1：改为水平填充，取消固定宽度，让容器铺满窗口 -->
+    <hc:TransitioningContentControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <!-- 修复2：删除固定Width，水平填充，取消内边距挤压 -->
+        <TabControl 
+            SelectedIndex="0"
+            Style="{StaticResource TabControlInLine}" 
+            Height="auto"
+            HorizontalAlignment="Stretch"
+            Margin="5" BorderThickness="0,0,0,1">
+            <!-- 统一外边距，美观 -->
+            <TabItem Header="设置" FontSize="16" >
+                <StackPanel>
+                    <hc:Divider Content="显示设置" HorizontalContentAlignment="Left" Height="24" Margin="10,5,10,0"/>
+                    <CheckBox 
+                            x:Name="IsShowTaskBar"
+                            Content="显示任务栏窗口"
+                            Margin="10,5,10,0" 
+                            VerticalAlignment="Top" 
+                            Height="48" Checked="IsShowTaskBar_Checked"/>
+                    <CheckBox 
+                            x:Name="IsShowMain"
+                            Content="显示主窗口"
+                            Margin="10,5,10,0" 
+                            VerticalAlignment="Top" 
+                            Height="46" Checked="IsShowMain_Checked"/>
+                    <hc:Divider Content="启动设置" HorizontalContentAlignment="Left" Height="24" Margin="10,5,10,0"/>
+                    <CheckBox 
+                             x:Name="IsStartup"
+                             Content="开机启动" 
+                             Margin="10,5,10,0" 
+                             VerticalAlignment="Top" 
+                             Height="46" Checked="IsStartup_Checked"/>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="设备自定义" FontSize="16">
+                <ListBox
+                    ItemsSource="{Binding BluetoothDevices}" 
+                    DisplayMemberPath="Name" 
+                    MouseDoubleClick="ListBox_MouseDoubleClick" 
+                    d:ItemsSource="{d:SampleData ItemCount=5}" 
+                    Height="417" 
+                    Margin="5,5,5,5"/>
+            </TabItem>
+        </TabControl>
+    </hc:TransitioningContentControl>
+</Window>
