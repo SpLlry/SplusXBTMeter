@@ -40,14 +40,12 @@ namespace BTBatteryDisplayApp
         /// </summary>
         public string? getVal(string section, string? key = null, string? defaultValue = null)
         {
-            if (!has_section(section) || key==null)
+            if (!has_section(section) || key == null)
                 return defaultValue;
 
-           
-                if (!has_option(section, key))
-                    return defaultValue;
-                return _config[section][key];
-
+            if (!has_option(section, key))
+                return defaultValue;
+            return _config[section][key];
         }
 
         /// <summary>
@@ -150,12 +148,15 @@ namespace BTBatteryDisplayApp
 
         private void _flush()
         {
-            if (!_dirty) return;
+            if (!_dirty)
+                return;
 
             try
             {
                 // 写入 INI 文件（UTF-8 编码）
-                using (StreamWriter sw = new StreamWriter(_filePath, false, System.Text.Encoding.UTF8))
+                using (
+                    StreamWriter sw = new StreamWriter(_filePath, false, System.Text.Encoding.UTF8)
+                )
                 {
                     foreach (var section in _config)
                     {
@@ -192,7 +193,11 @@ namespace BTBatteryDisplayApp
                     string trimLine = line.Trim();
 
                     // 跳过空行/注释
-                    if (string.IsNullOrEmpty(trimLine) || trimLine.StartsWith('#') || trimLine.StartsWith('/'))
+                    if (
+                        string.IsNullOrEmpty(trimLine)
+                        || trimLine.StartsWith('#')
+                        || trimLine.StartsWith('/')
+                    )
                         continue;
 
                     // 读取节点 [Section]

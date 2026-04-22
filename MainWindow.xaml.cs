@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace BTBatteryDisplayApp
 {
@@ -14,6 +15,7 @@ namespace BTBatteryDisplayApp
         public static List<DeviceBatteryInfo>? LatestBluetoothDevices { get; private set; } // 🔥 新增：静态缓存最新设备数据（全局可访问，解决后打开窗口拿不到数据）
         private TaskBarWindow? taskBarWindow;
         private SettingWindow? settingWindow;
+        private TrayWindow? trayWindow;
         private readonly System.Timers.Timer _btScanTimer;
         private readonly BtScan _btScan;
 
@@ -27,7 +29,12 @@ namespace BTBatteryDisplayApp
 
         public MainWindow()
         {
+
+            SystemTray.Init();
+            //trayWindow = new TrayWindow();
+            //trayWindow.Show();
             InitializeComponent();
+           
             Loaded += MainWindow_Loaded;
             Closed += MainWindow_Closed;
 
@@ -36,7 +43,7 @@ namespace BTBatteryDisplayApp
             _btScanTimer = new System.Timers.Timer(3000);
             _btScanTimer.Elapsed += async (s, e) => await UpdateBluetoothDataAsync();
             //
-          
+
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -45,11 +52,17 @@ namespace BTBatteryDisplayApp
         }
         private async void MainWindow_Loaded(object? sender, RoutedEventArgs e)
         {
+            // 先让 TrayWindow 托盘完全初始化，UI线程空闲后再打开窗口
+            //await Task.Delay(500);
+            await Task.Delay(500);
+
             taskBarWindow = new TaskBarWindow();
+
             taskBarWindow.Show();
-    
+
+
             _btScanTimer.Start();
-            await UpdateBluetoothDataAsync();
+          await UpdateBluetoothDataAsync();
         }
 
         private void MainWindow_Closed(object? sender, EventArgs e)
@@ -58,6 +71,7 @@ namespace BTBatteryDisplayApp
             _btScanTimer.Dispose();
             taskBarWindow?.Close();
             settingWindow?.Close();
+            trayWindow?.Close();
         }
 
         // 🔥 核心修复2：异步更新 + 智能发布（仅数据变化时发布）

@@ -40,6 +40,7 @@
             Content="退出" 
             RenderTransformOrigin="-0.223,0.085" 
             Margin="24,10,20,0"  VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Row="3" Click="Button_Click_1"/>
+ 
 
 
     </Grid>
