@@ -83,6 +83,12 @@ namespace BTBatteryDisplayApp
                 style |= Win32Api.WS_CHILD | Win32Api.WS_VISIBLE;
                 Win32Api.SetWindowLongPtr(wpfHwnd, Win32Api.GWL_STYLE, (IntPtr)style);
 
+                // 🔥 新增：设置窗口扩展样式 → 不拦截系统消息（修复托盘关键代码）
+                uint exStyle = (uint)Win32Api.GetWindowLongPtr(wpfHwnd, Win32Api.GWL_EXSTYLE);
+                exStyle |= 0x00000020; // WS_EX_TRANSPARENT：透明不拦截鼠标
+                exStyle |= 0x00000004; // WS_EX_NOPARENTNOTIFY：不拦截父窗口/系统消息
+                Win32Api.SetWindowLongPtr(wpfHwnd, Win32Api.GWL_EXSTYLE, (IntPtr)exStyle);
+
                 Win32Api.SetParent(wpfHwnd, _taskbarContainerHwnd);
                 AdjustWindowToTaskbar();
 
