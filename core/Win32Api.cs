@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using SplusXBTMeter.core;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -67,9 +68,54 @@ public static class Win32Api
 
     [DllImport("user32.dll")]
     public static extern IntPtr CreateWindowEx(int dwExStyle, string lpClassName, string lpWindowName, int dwStyle, int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
+    // 🔥 新增：加载本地 ICO 文件的核心 API
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    public static extern IntPtr LoadImage(IntPtr hInst, string lpszName, int uType, int cxDesired, int cyDesired, int fuLoad);
 
     [DllImport("user32.dll")]
+
     public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    // 🔥 新增：从内嵌资源创建图标
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern IntPtr CreateIconFromResource(byte[] presbits, int dwResSize, bool fIcon, int dwVer);
+    // 注册表根节点 HKEY_CURRENT_USER (和你Python代码一致)
+    public const uint HKEY_CURRENT_USER = 0x80000001;
+
+    // 读取权限
+    public const uint KEY_READ = 0x20019;
+
+    // 注册表值类型
+    public const int REG_SZ = 1;       // 字符串
+    public const int REG_DWORD = 4;    // 数字
+
+    /// <summary>
+    /// 打开注册表项
+    /// </summary>
+    [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern int RegOpenKeyExW(
+        uint hKey,
+        string lpSubKey,
+        uint ulOptions,
+        uint samDesired,
+        out IntPtr phkResult);
+
+    /// <summary>
+    /// 读取注册表值
+    /// </summary>
+    [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern int RegQueryValueExW(
+        IntPtr hKey,
+        string lpValueName,
+        int lpReserved,
+        out int lpType,
+        byte[] lpData,
+        ref int lpcbData);
+
+    /// <summary>
+    /// 关闭注册表项
+    /// </summary>
+    [DllImport("advapi32.dll")]
+    public static extern int RegCloseKey(IntPtr hKey);
     #endregion
 
     #region 结构体
@@ -155,48 +201,16 @@ public static class Win32Api
 
     public const int TPM_RETURNCMD = 0x00000100;
     public static readonly IntPtr IDI_APPLICATION = new IntPtr(32512);
-
+    // 加载图片常量（加载ICO专用）
+    public const int IMAGE_ICON = 1;
+    public const int LR_LOADFROMFILE = 0x00000010;
+    public const int LR_DEFAULTSIZE = 0x00000040;
     // 菜单分隔符 🔥 新增
     public const int MF_SEPARATOR = 0x0800;
     #endregion
 
     #region 工具方法
-    public static IntPtr GetWpfWindowHwnd(Window window)
-    {
-        return new WindowInteropHelper(window).EnsureHandle();
-    }
 
-    public static IntPtr FindTaskbarEmbedContainer()
-    {
-        IntPtr hTaskbar = FindWindow("Shell_TrayWnd", "");
-        Debug.WriteLine($"找到任务栏主窗口句柄：{hTaskbar}");
-        Debug.WriteLine(hTaskbar == IntPtr.Zero);
-        if (hTaskbar == IntPtr.Zero) return IntPtr.Zero;
-        return hTaskbar;
-        if (Environment.OSVersion.Version.Build >= 22000)
-        {
-            IntPtr hTaskbarContent = FindWindowEx(hTaskbar, IntPtr.Zero, "TaskbarContentView", null);
-            if (hTaskbarContent != IntPtr.Zero)
-            {
-                IntPtr hPrimaryContent = FindWindowEx(hTaskbarContent, IntPtr.Zero, "PrimaryContent", null);
-                if (hPrimaryContent != IntPtr.Zero)
-                {
-                    return FindWindowEx(hPrimaryContent, IntPtr.Zero, "MSTaskListWClass", null);
-                }
-            }
-        }
 
-        IntPtr hReBar = FindWindowEx(hTaskbar, IntPtr.Zero, "ReBarWindow32", null);
-        if (hReBar != IntPtr.Zero)
-        {
-            IntPtr hTaskBand = FindWindowEx(hReBar, IntPtr.Zero, "MSTaskSwWClass", null);
-            if (hTaskBand != IntPtr.Zero)
-            {
-                return hTaskBand;
-            }
-        }
-
-        return FindWindowEx(hTaskbar, IntPtr.Zero, "TrayNotifyWnd", null);
-    }
     #endregion
 }

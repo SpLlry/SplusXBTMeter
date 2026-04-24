@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
 
-namespace BtBatteryDisplayApp
+namespace SplusXBTMeter
 {
     /// <summary>
     /// 经典蓝牙(BTC)电量读取服务

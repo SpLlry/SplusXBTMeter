@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using HandyControl.Controls;
 
-namespace BTBatteryDisplayApp
+namespace SplusXBTMeter
 {
     public partial class TrayWindow : HandyControl.Controls.Window
     {

@@ -1,4 +1,4 @@
-﻿namespace BtBatteryDisplayApp
+﻿namespace SplusXBTMeter
 {
     /// <summary>
     /// 蓝牙设备公共实体类（BLE + BTC 共用）

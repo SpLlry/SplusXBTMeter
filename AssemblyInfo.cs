@@ -1,7 +1,7 @@
 /*
  * ==============================================
  * 文件名：AssemblyInfo.cs
- * 功能：BTBatteryDisplayApp 程序集信息配置文件
+ * 功能：SplusXBTMeter 程序集信息配置文件
  * 作用：配置程序集标题、版本、版权、公司等信息
  * 作者：Splusx
  * 版本：V0.2.1.0
@@ -15,9 +15,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // 程序集常规信息
-[assembly: AssemblyTitle("一款蓝牙设备电量显示工具")]
+[assembly: AssemblyTitle("SplusX蓝牙设备仪表台")]
 [assembly: AssemblyCompany("Splusx")]
-[assembly: AssemblyProduct("BTBatteryDisplayApp")]
+[assembly: AssemblyProduct("SplusXBTMeter")]
 [assembly: AssemblyCopyright("Copyright © Splusx 2026")]
 [assembly: AssemblyTrademark("Splusx")]
 [assembly: AssemblyCulture("")]
