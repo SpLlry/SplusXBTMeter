@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 
 
-namespace BTBatteryDisplayApp
+namespace SplusXBTMeter
 {
     public partial class AboutWindow : HandyControl.Controls.Window
     {

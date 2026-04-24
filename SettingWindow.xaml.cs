@@ -1,17 +1,17 @@
 ﻿#nullable enable
-using BtBatteryDisplayApp;
+using SplusXBTMeter;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace BTBatteryDisplayApp
+namespace SplusXBTMeter
 {
     /// <summary>
     /// Setting.xaml 的交互逻辑
     /// </summary>
-    public partial class SettingWindow : Window
+    public partial class SettingWindow : HandyControl.Controls.Window
     {
         // 🔥 ObservableCollection（WPF自动刷新必备）
         private ObservableCollection<DeviceBatteryInfo>? _bluetoothDevices = new ObservableCollection<DeviceBatteryInfo>();

@@ -1,6 +1,6 @@
-﻿using BtBatteryDisplayApp;
+﻿using SplusXBTMeter;
 
-namespace BTBatteryDisplayApp
+namespace SplusXBTMeter
 {
     /// <summary>
     /// 蓝牙扫描总入口：整合经典蓝牙(BTC) + 低功耗蓝牙(BLE)

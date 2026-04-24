@@ -1,5 +1,6 @@
 ﻿#nullable enable
-using BtBatteryDisplayApp;
+using SplusXBTMeter;
+using SplusXBTMeter.core;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -7,7 +8,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace BTBatteryDisplayApp
+namespace SplusXBTMeter
 {
     public partial class TaskBarWindow : HandyControl.Controls.Window, INotifyPropertyChanged
     {
@@ -67,7 +68,7 @@ namespace BTBatteryDisplayApp
         {
             try
             {
-                _taskbarContainerHwnd = Win32Api.FindTaskbarEmbedContainer();
+                _taskbarContainerHwnd = Win32Api.FindWindow("Shell_TrayWnd", "");
                 if (_taskbarContainerHwnd == IntPtr.Zero)
                 {
                     MessageBox.Show("未找到任务栏容器！");
@@ -75,7 +76,7 @@ namespace BTBatteryDisplayApp
                     return;
                 }
 
-                IntPtr wpfHwnd = Win32Api.GetWpfWindowHwnd(this);
+                IntPtr wpfHwnd = Utils.GetWpfWindowHwnd(this);
                 _hwndSource = HwndSource.FromHwnd(wpfHwnd);
                 _hwndSource.AddHook(WpfWndProc);
 
@@ -130,15 +131,22 @@ namespace BTBatteryDisplayApp
                 _hwndSource.Dispose();
             }
             if (_taskbarContainerHwnd == IntPtr.Zero) return;
-            Win32Api.SetParent(Win32Api.GetWpfWindowHwnd(this), IntPtr.Zero);
+            Win32Api.SetParent(Utils.GetWpfWindowHwnd(this), IntPtr.Zero);
         }
 
         private void AdjustWindowToTaskbar()
         {
             if (_taskbarContainerHwnd == IntPtr.Zero) return;
             Win32Api.GetWindowRect(_taskbarContainerHwnd, out Win32Api.RECT containerRect);
-            IntPtr wpfHwnd = Win32Api.GetWpfWindowHwnd(this);
-            Win32Api.SetWindowPos(wpfHwnd, IntPtr.Zero, 0, 0, 200, containerRect.Bottom - containerRect.Top, Win32Api.SWP_NOZORDER | Win32Api.SWP_NOACTIVATE);
+            IntPtr wpfHwnd = Utils.GetWpfWindowHwnd(this);
+            Utils.TaskBarInfo t =Utils.GetTaskBarInfo(); // 🔥 关键：获取最新的任务栏信息，确保位置正确
+            Console.WriteLine($"任务栏位置：Left={t.Left}, Top={t.Top}, Right={t.Right}, Bottom={t.Bottom}");
+            Console.WriteLine($"容器位置：Left={this.Width*Utils.GetDpiScale(this)}");
+            int pos = (int)(this.Width * Utils.GetDpiScale(this));
+            if (Utils.GetTaskbarAlignment() == 1) {
+                pos = 0;
+            }
+            Win32Api.SetWindowPos(wpfHwnd, IntPtr.Zero, t.Left- pos, 0, containerRect.Right - containerRect.Left, containerRect.Bottom - containerRect.Top, Win32Api.SWP_NOZORDER | Win32Api.SWP_NOACTIVATE);
         }
 
         private IntPtr WpfWndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)

@@ -1,8 +1,8 @@
 ﻿#nullable enable
-using BtBatteryDisplayApp;
+using SplusXBTMeter;
 using System.Windows;
 
-namespace BTBatteryDisplayApp
+namespace SplusXBTMeter
 {
     public partial class DeviceDiyWindow : HandyControl.Controls.Window
     {
@@ -17,6 +17,7 @@ namespace BTBatteryDisplayApp
             // 初始化数据
             Name.Text = device.Name;
             Address.Text = device.Mac;
+            IsShowDevice.IsChecked = device.IsShow;
         }
 
         // 保存

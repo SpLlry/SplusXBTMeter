@@ -1,7 +1,7 @@
 ﻿#nullable enable
 using System.IO;
 
-namespace BTBatteryDisplayApp
+namespace SplusXBTMeter
 {
     /// <summary>
     /// 参照 Python configparser 实现的 C# INI 配置类

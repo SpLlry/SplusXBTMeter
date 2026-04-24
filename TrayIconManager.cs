@@ -1,20 +1,22 @@
-﻿using System;
+﻿using HandyControl.Controls;
+using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
-using HandyControl.Controls;
 
-namespace BTBatteryDisplayApp
+namespace SplusXBTMeter
 {
     public class SystemTray : IDisposable
     {
         private static IntPtr _trayWindowHandle;
         private static bool _isDisposed;
         private static IntPtr _originalWndProcPtr;
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private static readonly HttpClient _httpClient = new();
+        private static IntPtr _customTrayIcon = IntPtr.Zero; // 自定义图标句柄
 
         public static void Init()
         {
@@ -28,18 +30,34 @@ namespace BTBatteryDisplayApp
                     IntPtr wndProcPtr = Marshal.GetFunctionPointerForDelegate(new WndProc(TrayWindowProc));
                     _originalWndProcPtr = Win32Api.SetWindowLongPtr(_trayWindowHandle, Win32Api.GWL_WNDPROC, wndProcPtr);
 
-                    Win32Api.NOTIFYICONDATA nid = new Win32Api.NOTIFYICONDATA();
+                    string iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"app.ico");
+                    Console.WriteLine($"iconPath{iconPath}");
+                    _customTrayIcon = Win32Api.LoadImage(
+                        IntPtr.Zero,
+                        iconPath,
+                        Win32Api.IMAGE_ICON,
+                        32, 32,
+                        Win32Api.LR_LOADFROMFILE | Win32Api.LR_DEFAULTSIZE
+                    );
+
+                    // 加载失败则使用系统默认图标
+                    if (_customTrayIcon == IntPtr.Zero)
+                    {
+                        _customTrayIcon = Win32Api.LoadIcon(IntPtr.Zero, Win32Api.IDI_APPLICATION);
+                    }
+
+                    Win32Api.NOTIFYICONDATA nid = new();
                     nid.cbSize = Marshal.SizeOf(nid);
                     nid.hWnd = _trayWindowHandle;
                     nid.uID = 1001;
                     nid.uFlags = Win32Api.NIF_ICON | Win32Api.NIF_TIP | Win32Api.NIF_MESSAGE;
                     nid.uCallbackMessage = Win32Api.WM_TRAY_MSG;
-                    nid.hIcon = Win32Api.LoadIcon(IntPtr.Zero, Win32Api.IDI_APPLICATION);
+                    nid.hIcon = _customTrayIcon;
                     nid.szTip = "蓝牙电量监控工具";
 
                     Win32Api.Shell_NotifyIcon(Win32Api.NIM_ADD, ref nid);
 
-                    Win32Api.MSG msg = new Win32Api.MSG();
+                    Win32Api.MSG msg = new();
                     while (Win32Api.GetMessage(out msg, _trayWindowHandle, 0, 0))
                     {
                         Win32Api.TranslateMessage(ref msg);
@@ -80,16 +98,15 @@ namespace BTBatteryDisplayApp
                 Win32Api.AppendMenu(menu, 0, 1002, "关于");
                 Win32Api.AppendMenu(menu, Win32Api.MF_SEPARATOR, 0, string.Empty);
                 Win32Api.AppendMenu(menu, 0, 1003, "检查更新");
+                Win32Api.AppendMenu(menu, 0, 1004, "重启");
                 Win32Api.AppendMenu(menu, Win32Api.MF_SEPARATOR, 0, string.Empty);
-                Win32Api.AppendMenu(menu, 0, 1004, "退出");
+                Win32Api.AppendMenu(menu, 0, 1005, "退出");
 
                 Win32Api.SetForegroundWindow(_trayWindowHandle);
                 int cmd = Win32Api.TrackPopupMenu(menu, Win32Api.TPM_RETURNCMD, pt.x, pt.y, 0, _trayWindowHandle, IntPtr.Zero);
                 Win32Api.DestroyMenu(menu);
 
-                if (Application.Current != null)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
+                Application.Current?.Dispatcher.Invoke(() =>
                     {
                         if (cmd == 1001)
                         {
@@ -106,21 +123,37 @@ namespace BTBatteryDisplayApp
                         }
                         if (cmd == 1004)
                         {
-                            var result = HandyControl.Controls.MessageBox.Show(Application.Current.MainWindow, "确认退出吗？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                            // 重启APP
+                             RestartApp();
+                        }
+                        if (cmd == 1005)
+                        {
+                            var result = HandyControl.Controls.MessageBox.Show( "确认退出吗？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Question);
                             if (result == MessageBoxResult.Yes)
                             {
                                 Application.Current.Shutdown();
                             }
                         }
                     });
-                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"显示菜单时出错: {ex.Message}");
             }
         }
-
+        private static void RestartApp()
+        {
+            try
+            {
+                string appPath = Process.GetCurrentProcess().MainModule.FileName;
+                Process.Start(appPath);
+                Application.Current.Shutdown();
+            }
+            catch
+            {
+                HandyControl.Controls.MessageBox.Show("重启失败！");
+            }
+        }
         // ====================== 【修复完成：100%解析成功】 ======================
         private static async Task ChcekUpdate()
         {
@@ -135,12 +168,13 @@ namespace BTBatteryDisplayApp
                 string json = await _httpClient.GetStringAsync(apiUrl);
 
                 // 3. 【终极解析配置】完全适配你的JSON
-                var options = new JsonSerializerOptions
+                JsonSerializerOptions jsonSerializerOptions = new()
                 {
                     PropertyNameCaseInsensitive = true,  // 忽略大小写
                     IgnoreNullValues = true,             // 忽略空值
                     AllowTrailingCommas = true           // 允许尾逗号
                 };
+                var options = jsonSerializerOptions;
 
                 // 4. 反序列化（绝对不为null）
                 var data = JsonSerializer.Deserialize<GiteeRelease>(json, options);
@@ -153,22 +187,21 @@ namespace BTBatteryDisplayApp
                 }
 
                 // 6. 版本对比
-                Version serverVersion = new Version(data.tag_name);
+                Version serverVersion = new(data.TagNmae);
                 if (serverVersion > new Version(localVer))
                 {
                  
-                    var ret = HandyControl.Controls.MessageBox.Show(
-                        Application.Current.MainWindow,
-                        $"发现新版本：{data.tag_name}\n本地版本：{localVer}\n\n更新日志：\n{data.body}",
+                    MessageBoxResult ret = HandyControl.Controls.MessageBox.Show(
+                        $"发现新版本：{data.TagNmae}\n本地版本：{localVer}\n\n更新日志：\n{data.Body}",
                         "更新提示", MessageBoxButton.YesNo, MessageBoxImage.Asterisk);
                     if (ret == MessageBoxResult.Yes) {
                         try
                         {
                             // ====================== 解析下载链接 ======================
                             string downloadUrl = "";
-                            if (data.assets != null && data.assets.Length > 0)
+                            if (data.Assets != null && data.Assets.Length > 0)
                             {
-                                var asset = JsonSerializer.SerializeToElement(data.assets[0]);
+                                var asset = JsonSerializer.SerializeToElement(data.Assets[0]);
                                 downloadUrl = asset.GetProperty("browser_download_url").GetString();
                             }
                             if (string.IsNullOrEmpty(downloadUrl))
@@ -202,10 +235,11 @@ namespace BTBatteryDisplayApp
         // 【严格匹配你提供的JSON结构】
         public class GiteeRelease
         {
-            public string tag_name { get; set; } = "0.0.0";
-            public string body { get; set; }="暂无更新日志";
-            public object[] assets { get; set; }= Array.Empty<object>();
-            public string name { get; set; }= string.Empty;
+            public string TagNmae { get; set; } = "0.0.0";
+            public string Body { get; set; }="暂无更新日志";
+            public object[] Assets { get; set; }= [];
+
+            public string Name { get; set; }= string.Empty;
         }
         // ======================================================================
 
