@@ -47,13 +47,12 @@ namespace SplusXBTMeter
         }
 
         // ====================== 核心：直接调用 App.Config.getVal ======================
-        private void LoadWaveConfig()
+        public void LoadWaveConfig()
         {
             try
             {
                 // 全局调用，无任何局部声明
-                //string? skin = App.Config.getVal("settings", "skin", "Normal");
-                string? skin = "Wave1";
+                string? skin = App.Config.getVal("settings", "skin", "Default");
                 Console.WriteLine($"skin:{skin}");
                 IsWaveEffect = skin=="Wave";
             }

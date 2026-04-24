@@ -28,18 +28,20 @@
                     <hc:Divider Content="样式设置" HorizontalContentAlignment="Left" Height="24" Margin="10,5,10,0"/>
 
                     <hc:ComboBox 
+                        x:Name="SkinComboBox"
                         Height="58" Margin="10,5,10,0" 
                         hc:InfoElement.Title="任务栏样式" 
                         Style="{StaticResource ComboBoxExtend}" 
-                         SelectedIndex="0"
+                        SelectedItem="Default"
+                        SelectionChanged="ComboBox_SelectionChanged"
                         >
                         <!-- 下拉选项 -->
-                          <ComboBoxItem>
+                        <ComboBoxItem Tag="Default">
                             <StackPanel Orientation="Horizontal" Margin="2">
                                 <TextBlock Text="圆环模式" Margin="5,0"/>
                             </StackPanel>
                         </ComboBoxItem>
-                        <ComboBoxItem>
+                        <ComboBoxItem Tag="Wave">
                             <StackPanel Orientation="Horizontal" Margin="2">
                                 <TextBlock Text="波纹模式" Margin="5,0"/>
                             </StackPanel>
@@ -49,23 +51,23 @@
                     <hc:Divider Content="显示设置" HorizontalContentAlignment="Left" Height="24" Margin="10,5,10,0"/>
                     <CheckBox 
                             x:Name="IsShowTaskBar"
-                            Content="显示任务栏窗口"
+                            Content="显示任务栏窗口(还没做)"
                             Margin="10,5,10,0" 
                             VerticalAlignment="Top" 
-                            Height="24" Checked="IsShowTaskBar_Checked"/>
+                            Height="24" Click="IsShowTaskBar_Checked"/>
                     <CheckBox 
                             x:Name="IsShowMain"
-                            Content="显示主窗口"
+                            Content="显示主窗口(还没做)"
                             Margin="10,5,10,0" 
                             VerticalAlignment="Top" 
-                            Height="24" Checked="IsShowMain_Checked"/>
+                            Height="24" Click="IsShowMain_Checked"/>
                     <hc:Divider Content="启动设置" HorizontalContentAlignment="Left" Height="24" Margin="10,5,10,0"/>
                     <CheckBox 
                              x:Name="IsStartup"
                              Content="开机启动" 
                              Margin="10,5,10,0" 
                              VerticalAlignment="Top" 
-                             Height="24" Checked="IsStartup_Checked"/>
+                             Height="24" Click="IsStartup_Checked"/>
                 </StackPanel>
             </TabItem>
             <TabItem Header="设备自定义" FontSize="16">

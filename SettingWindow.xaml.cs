@@ -1,7 +1,11 @@
 ﻿#nullable enable
+using HandyControl.Controls;
 using SplusXBTMeter;
+using SplusXBTMeter.core;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,19 +39,28 @@ namespace SplusXBTMeter
         {
             try
             {
-                IsStartup.IsChecked = App.Config.getVal("Settings", "Startup", "0") == "1";
+                IsStartup.IsChecked = Utils.IsSelfStart("SplusXBTMeter");
                 IsShowTaskBar.IsChecked = App.Config.getVal("Settings", "TaskBarWindow", "0") == "1";
                 IsShowMain.IsChecked = App.Config.getVal("Settings", "MainWindow", "0") == "1";
                 // 🔥 核心修复：主动拉取最新的缓存数据（补发历史数据）
                 // 无论窗口何时打开，都能立即拿到数据
                 OnBluetoothDevicesUpdated(MainWindow.LatestBluetoothDevices);
                 MainWindow.BluetoothDevicesUpdated += OnBluetoothDevicesUpdated;
+                string skin = App.Config.getVal("settings", "skin", "Default");
 
+                foreach (ComboBoxItem item in SkinComboBox.Items)
+                {
+                    if (item.Tag.ToString() == skin)
+                    {
+                        SkinComboBox.SelectedItem = item;
+                        break;
+                    }
+                }
             }
             catch (Exception ex)
             {
                 // 完全还原你原版的 HandyControl MessageBox
-                MessageBox.Show($"失败：{ex.Message}");
+                HandyControl.Controls.MessageBox.Show($"失败：{ex.Message}");
                 Close();
             }
         }
@@ -59,13 +72,51 @@ namespace SplusXBTMeter
         {
 
         }
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            HandyControl.Controls.ComboBox comboBox = sender as HandyControl.Controls.ComboBox;
+            if (comboBox == null) return;
 
+            // 获取选中的 ComboBoxItem
+            ComboBoxItem selectedItem = comboBox.SelectedItem as ComboBoxItem;
+            if (selectedItem != null)
+            {
+                // 获取 Tag 属性（ID）
+                string Skin = Convert.ToString(selectedItem.Tag); ;
+                Console.WriteLine($"选中的Skin: {Skin}");
+                if (Skin != App.Config.getVal("settings", "skin", "Default")) {
+                    App.Config.setVal("settings", "skin", Skin);
+                    HandyControl.Controls.MessageBox.Show("已切换任务栏样式,重启后生效","提示");
+                }
+               
+                // 根据 ID 执行不同操作
+                switch (Skin)
+                {
+                    case "Default":
+                        Console.WriteLine("选择了圆环模式");
+                        break;
+                    case "Wave":
+                        Console.WriteLine("选择了波纹模式");
+                        break;
+                }
+            }
+        }
 
 
         private void IsStartup_Checked(object sender, System.Windows.RoutedEventArgs e)
         {
             Console.WriteLine("启用开机自启");
-            App.Config.setVal("Settings", "Startup", IsStartup.IsChecked == true ? "1" : "0");
+            App.Config.setVal("Settings", "Startup", IsStartup.IsChecked ==true ? "1" : "0");
+            if (IsStartup.IsChecked == true)
+            {
+                string AppPath = Process.GetCurrentProcess().MainModule.FileName;
+                Console.WriteLine($"{AppPath}");
+                Utils.AddStartup(AppPath, "SplusXBTMeter", "SplusX蓝牙设备电量显示");
+            }
+            else {
+                Console.WriteLine($"删除开机");
+                Utils.RemoveStartup("SplusXBTMeter");
+            }
         }
 
         private void IsShowTaskBar_Checked(object sender, System.Windows.RoutedEventArgs e)
@@ -120,5 +171,7 @@ namespace SplusXBTMeter
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+      
     }
 }

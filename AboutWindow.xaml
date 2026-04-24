@@ -57,7 +57,6 @@
         <TextBlock
       Text="支持任务栏嵌入、系统托盘、多设备管理"
       FontSize="14"
-      Foreground="{DynamicResource TextSecondaryBrush}"
       HorizontalAlignment="Center"
       Margin="0,10"
     />
@@ -66,7 +65,6 @@
         <TextBlock
       Text="Copyright© 2026 By SPlusx"
       FontSize="12"
-      Foreground="{DynamicResource TextThirdBrush}"
       Margin="0,10"
       HorizontalAlignment="Center"
     />

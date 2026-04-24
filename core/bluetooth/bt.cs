@@ -14,8 +14,9 @@
         {
             return new DeviceBatteryInfo
             {
-                Mac = this.Mac,
                 Name = this.Name,
+                Mac = this.Mac,
+                IsConnected = this.IsConnected,
                 Battery = this.Battery,
                 IsShow = this.IsShow
             };
