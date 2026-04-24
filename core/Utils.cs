@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows;
-
+using System.IO;
 namespace SplusXBTMeter.core
 {
     internal class Utils
@@ -152,6 +152,110 @@ namespace SplusXBTMeter.core
             catch
             {
                 return 1;
+            }
+        }
+        /// <summary>
+        /// 添加到开机启动文件夹
+        /// </summary>
+        /// <param name="appPath">应用程序完整路径</param>
+        /// <param name="appName">应用程序名称（用作快捷方式文件名）</param>
+        /// <param name="description">快捷方式描述</param>
+        public static void AddStartup(string appPath, string appName, string description)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(appPath) || !System.IO.File.Exists(appPath))
+                {
+                    throw new ArgumentException("应用程序路径无效或文件不存在");
+                }
+
+                string startupFolder = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+                string shortcutPath = Path.Combine(startupFolder, $"{appName}.lnk");
+
+                CreateShortcut(shortcutPath, appPath, description);
+                Console.WriteLine($"已添加到启动文件夹: {shortcutPath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"添加到启动文件夹失败: {ex.Message}");
+                HandyControl.Controls.MessageBox.Show($"添加到启动文件夹失败: {ex.Message}", "错误");
+            }
+        }
+
+        /// <summary>
+        /// 从开机启动文件夹移除
+        /// </summary>
+        /// <param name="appName">应用程序名称（用作快捷方式文件名）</param>
+        public static void RemoveStartup(string appName)
+        {
+            try
+            {
+                string startupFolder = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+                string shortcutPath = Path.Combine(startupFolder, $"{appName}.lnk");
+                Console.WriteLine($"从启动文件夹删除: {shortcutPath}");
+                if (System.IO.File.Exists(shortcutPath))
+                {
+                    System.IO.File.Delete(shortcutPath);
+                    Console.WriteLine($"已从启动文件夹删除: {shortcutPath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"从启动文件夹删除失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 创建快捷方式
+        /// </summary>
+        /// <param name="shortcutPath">快捷方式文件路径</param>
+        /// <param name="targetPath">目标程序路径</param>
+        /// <param name="description">快捷方式描述</param>
+        public static void CreateShortcut(string shortcutPath, string targetPath, string description)
+        {
+            try
+            {
+                Type shellType = Type.GetTypeFromProgID("WScript.Shell");
+                if (shellType == null)
+                {
+                    throw new Exception("无法创建 WScript.Shell 对象");
+                }
+
+                dynamic shell = Activator.CreateInstance(shellType);
+                dynamic shortcut = shell.CreateShortcut(shortcutPath);
+
+                shortcut.TargetPath = targetPath;
+                shortcut.WorkingDirectory = Path.GetDirectoryName(targetPath);
+                shortcut.WindowStyle = 1;
+                shortcut.Description = description;
+                shortcut.IconLocation = targetPath + ",0";
+
+                shortcut.Save();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"创建快捷方式失败: {ex.Message}");
+                throw;
+            }
+        }
+        public static bool IsSelfStart(string appName)
+        {
+            try
+            {
+                string startupFolder = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+                string shortcutPath = Path.Combine(startupFolder, $"{appName}.lnk");
+
+                bool exists = System.IO.File.Exists(shortcutPath);
+
+                Console.WriteLine($"开机自启状态: {(exists ? "已启用" : "未启用")}");
+                Console.WriteLine($"快捷方式路径: {shortcutPath}");
+
+                return exists;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ 检查开机自启状态失败：{ex.Message}");
+                return false;
             }
         }
     }

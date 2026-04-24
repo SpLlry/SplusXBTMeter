@@ -53,7 +53,7 @@ namespace SplusXBTMeter
                     nid.uFlags = Win32Api.NIF_ICON | Win32Api.NIF_TIP | Win32Api.NIF_MESSAGE;
                     nid.uCallbackMessage = Win32Api.WM_TRAY_MSG;
                     nid.hIcon = _customTrayIcon;
-                    nid.szTip = "蓝牙电量监控工具";
+                    nid.szTip = "SplusX蓝牙设备电量显示";
 
                     Win32Api.Shell_NotifyIcon(Win32Api.NIM_ADD, ref nid);
 
@@ -145,8 +145,9 @@ namespace SplusXBTMeter
         {
             try
             {
-                string appPath = Process.GetCurrentProcess().MainModule.FileName;
-                Process.Start(appPath);
+                App.ReleaseMutex();
+                string AppPath = Process.GetCurrentProcess().MainModule.FileName;
+                Process.Start(AppPath);
                 Application.Current.Shutdown();
             }
             catch
@@ -206,7 +207,7 @@ namespace SplusXBTMeter
                             }
                             if (string.IsNullOrEmpty(downloadUrl))
                             {
-                                downloadUrl = "https://gitee.com/spllr/BTPowerNotice/releases";
+                                downloadUrl = "https://gitee.com/spllr/SplusXBTMeter/releases";
                             }
                             // ==========================================================
 

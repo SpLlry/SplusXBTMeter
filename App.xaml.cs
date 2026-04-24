@@ -125,5 +125,18 @@ namespace SplusXBTMeter
                 // ignored
             }
         }
+        public static void ReleaseMutex()
+        {
+            try
+            {
+                _appMutex?.ReleaseMutex();
+                _appMutex?.Close();
+                _appMutex = null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"释放互斥锁失败: {ex.Message}");
+            }
+        }
     }
 }

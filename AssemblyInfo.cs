@@ -15,7 +15,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // 程序集常规信息
-[assembly: AssemblyTitle("SplusX蓝牙设备仪表台")]
+[assembly: AssemblyTitle("SplusX蓝牙设备电量显示")]
 [assembly: AssemblyCompany("Splusx")]
 [assembly: AssemblyProduct("SplusXBTMeter")]
 [assembly: AssemblyCopyright("Copyright © Splusx 2026")]
