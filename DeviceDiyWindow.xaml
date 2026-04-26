@@ -5,7 +5,7 @@
     x:Class="SplusXBTMeter.DeviceDiyWindow"
     Title="编辑设备属性" 
     Height="274" 
-    Width="400"
+    Width="300"
     WindowStartupLocation="CenterOwner"
     Icon="app.ico"
     ResizeMode="NoResize">
@@ -53,14 +53,12 @@
         <StackPanel 
             Grid.Row="3"
             Orientation="Horizontal"
-            Margin="287,2,3,0">
+            Margin="187,2,3,0">
             <Button 
                 Content="保存" Click="Btn_Save" Width="80" 
                  Style="{StaticResource ButtonSuccess}"
                     RenderTransformOrigin="0.2,0.581" 
                     />
-            
-            
         </StackPanel>
     </Grid>
 </hc:Window>

@@ -30,6 +30,47 @@ public static class Win32Api
 
     [DllImport("user32.dll")]
     public static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+    [DllImport("user32.dll")]
+    public static extern IntPtr SetWinEventHook(
+      uint eventMin,
+      uint eventMax,
+      IntPtr hmodWinEventProc,
+      WinEventDelegate lpfnWinEventProc,
+      uint idProcess,
+      uint idThread,
+      uint dwFlags);
+
+    [DllImport("user32.dll")]
+    public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+    // 注册表API
+    [DllImport("advapi32.dll", SetLastError = true)]
+    public static extern int RegOpenKeyEx(
+        IntPtr hKey,
+        string lpSubKey,
+        int ulOptions,
+        int samDesired,
+        out IntPtr phkResult);
+
+    [DllImport("advapi32.dll", SetLastError = true)]
+    public static extern int RegNotifyChangeKeyValue(
+        IntPtr hKey,
+        bool bWatchSubtree,
+        int dwNotifyFilter,
+        IntPtr hEvent,
+        bool fAsynchronous);
+
+    [DllImport("advapi32.dll", SetLastError = true)]
+    public static extern int RegQueryValueEx(
+        IntPtr hKey,
+        string lpValueName,
+        int lpReserved,
+        out int lpType,
+        byte[] lpData,
+        ref int lpcbData);
+
+    [DllImport("advapi32.dll", SetLastError = true)]
+    public static extern int RegCloseKey(IntPtr hKey);
+
     #endregion
 
     #region 托盘专用 API
@@ -111,14 +152,19 @@ public static class Win32Api
         byte[] lpData,
         ref int lpcbData);
 
-    /// <summary>
-    /// 关闭注册表项
-    /// </summary>
-    [DllImport("advapi32.dll")]
-    public static extern int RegCloseKey(IntPtr hKey);
+
     #endregion
 
     #region 结构体
+    public delegate void WinEventDelegate(
+    IntPtr hWinEventHook,
+    uint eventType,
+    IntPtr hwnd,
+    int idObject,
+    int idChild,
+    uint dwEventThread,
+    uint dwmsEventTime);
+
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
     {
@@ -170,6 +216,15 @@ public static class Win32Api
     #endregion
 
     #region 常量
+    // 注册表相关常量
+
+    public const int KEY_NOTIFY = 0x0010;
+    public const int REG_NOTIFY_CHANGE_LAST_SET = 0x00000004;
+    public const string TASKBAR_CLASS = "Shell_TrayWnd";
+    public const uint EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
+    public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
+    public const uint WINEVENT_SKIPOWNPROCESS = 0x0002;
+
     public const int GWL_STYLE = -16;
     public const int GWL_EXSTYLE = -20;
     public const int GWL_WNDPROC = -4;
