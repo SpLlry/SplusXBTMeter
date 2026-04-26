@@ -110,8 +110,6 @@ SplusXBTMeter是一个实用的蓝牙设备电量监控工具,基于c#开发,通
 |--------------------------------------|-----------------------------------------|
 | ![支付宝扫码](https://gh-proxy.com/https://raw.githubusercontent.com/SpLlry/BTPowerNotice/refs/heads/main/resource/20260408174618_230.jpg) | ![微信扫码](https://gh-proxy.com/https://raw.githubusercontent.com/SpLlry/BTPowerNotice/refs/heads/main/resource/a3b2e1d764ad207c66f7aad7e7e6578f.jpg) |
 
-* 扫码领红包也行哦
-  
-![支付宝扫码领红包](https://gh-proxy.com/https://raw.githubusercontent.com/SpLlry/BTPowerNotice/refs/heads/main/resource/20260408174619_231_263.png)
+
 
 
