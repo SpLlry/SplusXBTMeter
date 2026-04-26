@@ -30,7 +30,7 @@ namespace SplusXBTMeter.Core
                     IntPtr wndProcPtr = Marshal.GetFunctionPointerForDelegate(new WndProc(TrayWindowProc));
                     _originalWndProcPtr = Win32Api.SetWindowLongPtr(_trayWindowHandle, Win32Api.GWL_WNDPROC, wndProcPtr);
 
-                    string iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"app.ico");
+                    string iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"App.ico");
                     Console.WriteLine($"iconPath{iconPath}");
                     _customTrayIcon = Win32Api.LoadImage(
                         IntPtr.Zero,
@@ -165,35 +165,37 @@ namespace SplusXBTMeter.Core
                 string localVer = $"{localVersion.Major}.{localVersion.Minor}.{localVersion.Build}";
 
                 // 2. 请求Gitee接口
-                string apiUrl = "https://gitee.com/api/v5/repos/spllr/BTPowerNotice/releases/latest";
+                string apiUrl = "https://gitee.com/api/v5/repos/spllr/SplusXBTMeter/releases/latest";
                 string json = await _httpClient.GetStringAsync(apiUrl);
 
                 // 3. 【终极解析配置】完全适配你的JSON
                 JsonSerializerOptions jsonSerializerOptions = new()
                 {
                     PropertyNameCaseInsensitive = true,  // 忽略大小写
-                    IgnoreNullValues = true,             // 忽略空值
                     AllowTrailingCommas = true           // 允许尾逗号
                 };
                 var options = jsonSerializerOptions;
 
                 // 4. 反序列化（绝对不为null）
                 var data = JsonSerializer.Deserialize<GiteeRelease>(json, options);
-
+                Console.WriteLine($"{JsonSerializer.Serialize(data)}");
+                Console.WriteLine($"{json}");
                 // 5. 校验数据
                 if (data == null)
                 {
                     HandyControl.Controls.MessageBox.Show("解析失败", "错误");
                     return;
                 }
-
+               
                 // 6. 版本对比
-                Version serverVersion = new(data.TagNmae);
+                Version serverVersion = new(data.tag_name);
+                Console.WriteLine($"localVer{localVer}-serverVersion{serverVersion}-data.TagNmae{data.tag_name}");
+       
                 if (serverVersion > new Version(localVer))
                 {
                  
                     MessageBoxResult ret = HandyControl.Controls.MessageBox.Show(
-                        $"发现新版本：{data.TagNmae}\n本地版本：{localVer}\n\n更新日志：\n{data.Body}",
+                        $"发现新版本：{data.tag_name}\n本地版本：{localVer}\n\n更新日志：\n{data.Body}",
                         "更新提示", MessageBoxButton.YesNo, MessageBoxImage.Asterisk);
                     if (ret == MessageBoxResult.Yes) {
                         try
@@ -215,28 +217,28 @@ namespace SplusXBTMeter.Core
                         }
                         catch
                         {
-                            HandyControl.Controls.MessageBox.Show(Application.Current.MainWindow, "打开下载链接失败！", "错误");
+                            HandyControl.Controls.MessageBox.Show("打开下载链接失败！", "错误");
                         }
                     }
                     
                 }
                 else
                 {
-                    HandyControl.Controls.MessageBox.Show(Application.Current.MainWindow, "当前已是最新版本！", "提示");
+                    HandyControl.Controls.MessageBox.Show("当前已是最新版本！", "提示");
                 }
             }
             catch (Exception ex)
             {
                 // 打印错误详情，方便调试
                 Console.WriteLine($"错误：{ex.Message}");
-                HandyControl.Controls.MessageBox.Show(Application.Current.MainWindow, $"检查更新失败：{ex.Message}", "错误");
+                HandyControl.Controls.MessageBox.Show( $"检查更新失败：{ex.Message}", "错误");
             }
         }
 
         // 【严格匹配你提供的JSON结构】
         public class GiteeRelease
         {
-            public string TagNmae { get; set; } = "0.0.0";
+            public string tag_name { get; set; } = "0.0.0";
             public string Body { get; set; }="暂无更新日志";
             public object[] Assets { get; set; }= [];
 

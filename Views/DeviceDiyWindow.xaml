@@ -6,7 +6,7 @@
     Title="编辑设备属性"
     Height="274"
     Width="300"
-    Icon="pack://application:,,,/app.ico"
+    Icon="pack://application:,,,/App.ico"
     HorizontalAlignment="Center"
     WindowStartupLocation="CenterScreen"
     ResizeMode="NoResize">

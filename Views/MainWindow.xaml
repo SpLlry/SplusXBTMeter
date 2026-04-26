@@ -13,7 +13,7 @@
         BorderThickness="0"
         WindowStartupLocation="CenterScreen"
         Topmost="False"
-        Icon="pack://application:,,,/app.ico"
+        Icon="pack://application:,,,/App.ico"
         ResizeMode="NoResize" HorizontalAlignment="Center">
 
     <!-- 自定义展示内容：网速+CPU使用率 -->

@@ -4,7 +4,8 @@
 		<!-- 动态切换：调试模式=控制台窗口，发布模式=纯桌面应用 -->
 		<OutputType Condition="'$(Configuration)' == 'Debug'">Exe</OutputType>
 		<OutputType Condition="'$(Configuration)' == 'Release'">WinExe</OutputType>
-
+		<!-- ✅ 自定义程序名称 -->
+		<AssemblyName>App</AssemblyName>
 
 		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 		<Nullable>enable</Nullable>
@@ -38,42 +39,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="app.ico" />
+		<Resource Include="App.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="app.ico">
+		<Content Include="App.ico">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
-	<!-- 移动第三方DLL，保留主程序自身文件 -->
-	<Target Name="MoveAssembliesToLib" AfterTargets="PostBuildEvent">
-		<MakeDir Directories="$(OutDir)libs" />
 
-		<ItemGroup>
-			<!-- 匹配所有第三方dll，排除【你自己的主程序dll】 -->
-			<DllFiles Include="$(OutDir)*.dll" Exclude="$(OutDir)SplusXBTMeter.dll" />
-			<PdbFiles Include="$(OutDir)*.pdb" Exclude="$(OutDir)SplusXBTMeter.pdb" />
-		</ItemGroup>
 
-		<Move SourceFiles="@(DllFiles)" DestinationFolder="$(OutDir)libs" />
-		<Move SourceFiles="@(PdbFiles)" DestinationFolder="$(OutDir)libs" />
-	</Target>
-	<Target Name="MoveAssembliesToLib" AfterTargets="Publish">
-		<PropertyGroup>
-			<PublishDir>$(PublishDir)</PublishDir>
-		</PropertyGroup>
-
-		<MakeDir Directories="$(PublishDir)libs" />
-
-		<ItemGroup>
-			<DllFiles Include="$(PublishDir)*.dll"
-					  Exclude="$(PublishDir)SplusXBTMeter.dll" />
-			<PdbFiles Include="$(PublishDir)*.pdb"
-					  Exclude="$(PublishDir)SplusXBTMeter.pdb" />
-		</ItemGroup>
-
-		<Move SourceFiles="@(DllFiles)" DestinationFolder="$(PublishDir)libs" />
-		<Move SourceFiles="@(PdbFiles)" DestinationFolder="$(PublishDir)libs" />
-	</Target>
 </Project>
