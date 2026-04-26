@@ -5,15 +5,15 @@
 		<OutputType Condition="'$(Configuration)' == 'Debug'">Exe</OutputType>
 		<OutputType Condition="'$(Configuration)' == 'Release'">WinExe</OutputType>
 
+
 		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
-
+		
 		<!-- 禁用跨平台兼容性警告 -->
 		<EnablePlatformCompatibilityAnalyzer>false</EnablePlatformCompatibilityAnalyzer>
 
-		<StartupObject />
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
 		<ApplicationIcon>icon\bluetooth.ico</ApplicationIcon>
@@ -21,6 +21,8 @@
 
 		<!-- 关键：确保所有依赖都被复制 -->
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	
+		
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -53,5 +55,21 @@
 		<Move SourceFiles="@(DllFiles)" DestinationFolder="$(OutDir)libs" />
 		<Move SourceFiles="@(PdbFiles)" DestinationFolder="$(OutDir)libs" />
 	</Target>
+	<Target Name="MoveAssembliesToLib" AfterTargets="Publish">
+		<PropertyGroup>
+			<PublishDir>$(PublishDir)</PublishDir>
+		</PropertyGroup>
 
+		<MakeDir Directories="$(PublishDir)libs" />
+
+		<ItemGroup>
+			<DllFiles Include="$(PublishDir)*.dll"
+					  Exclude="$(PublishDir)SplusXBTMeter.dll" />
+			<PdbFiles Include="$(PublishDir)*.pdb"
+					  Exclude="$(PublishDir)SplusXBTMeter.pdb" />
+		</ItemGroup>
+
+		<Move SourceFiles="@(DllFiles)" DestinationFolder="$(PublishDir)libs" />
+		<Move SourceFiles="@(PdbFiles)" DestinationFolder="$(PublishDir)libs" />
+	</Target>
 </Project>

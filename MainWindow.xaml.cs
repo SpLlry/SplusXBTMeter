@@ -1,14 +1,15 @@
 ﻿#nullable enable
-using SplusXBTMeter;
-using SplusXBTMeter.core;
 using HandyControl; // 🔥 修复：添加根命名空间（解决 ApplicationTheme 找不到）
 using HandyControl.Controls;
 using Microsoft.Win32;
+using SplusXBTMeter;
+using SplusXBTMeter.core;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Threading;
+using static Win32Api;
 
 namespace SplusXBTMeter
 {
@@ -20,6 +21,8 @@ namespace SplusXBTMeter
         private readonly System.Timers.Timer _btScanTimer;
         private readonly BtScan _btScan;
         private int _isSystemDarkTheme;
+        private TaskbarMonitor? _taskbarMonitor;
+
 
         private List<DeviceBatteryInfo>? _bluetoothDevices = new();
         public List<DeviceBatteryInfo>? BluetoothDevices => _bluetoothDevices;
@@ -36,14 +39,47 @@ namespace SplusXBTMeter
 
             _btScan = new BtScan
             {
-                UseMockData = false
+                UseMockData = true
             };
             _btScanTimer = new System.Timers.Timer(3000);
             _btScanTimer.Elapsed += async (s, e) => await UpdateBluetoothDataAsync();
             StartInit();
             SystemTray.Init();
+            // 启动任务栏监听
+            _taskbarMonitor = new TaskbarMonitor();
+            _taskbarMonitor.TaskbarAlignmentChanged += OnTaskbarAlignmentChanged;
+            _taskbarMonitor.TrayNotifyWndChanged += OnTrayNotifyWndChanged;  // 🔥 新增
+            _taskbarMonitor.Start();
+        }
+        private void OnTrayNotifyWndChanged(RECT rect)  // 🔥 新增
+        {
+            Console.WriteLine($"TrayNotifyWnd 区域变化: ({rect.Left},{rect.Top})-({rect.Right},{rect.Bottom})");
+            if (taskBarWindow != null) { 
+             EventBus.Publish(new TaskbarAlignmentChangedEvent(Utils.GetTaskbarAlignment()));
+            }
+            // 根据 TrayNotifyWnd 的新位置调整窗口
         }
 
+        private void OnTaskbarAlignmentChanged(int alignment)
+        {
+            string alignmentText = alignment switch
+            {
+                0 => "左对齐",
+                1 => "居中对齐",
+                _ => "未知"
+            };
+
+            Console.WriteLine($"✅ 任务栏对齐方式已更改为: {alignmentText} ({alignment})");
+
+            // 在这里处理任务栏对齐方式变化
+            // 例如：调整你的任务栏窗口位置
+            if (taskBarWindow != null)
+            {
+                // 根据对齐方式调整窗口位置
+                // AdjustTaskbarWindowPosition(alignment);
+                EventBus.Publish(new TaskbarAlignmentChangedEvent(alignment));
+            }
+        }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             settingWindow = new SettingWindow();
@@ -52,7 +88,7 @@ namespace SplusXBTMeter
 
         private async void StartInit()
         {
-            Console.WriteLine("窗口子啊u人");
+            Console.WriteLine("窗口载入");
             taskBarWindow = new TaskBarWindow();
             taskBarWindow.Show();
 
@@ -94,7 +130,7 @@ namespace SplusXBTMeter
             Console.WriteLine(_isSystemDarkTheme==1 ? "✅ 浅色模式" : "✅ 深色模式");
         }
 
-      
+
 
         private async Task UpdateBluetoothDataAsync()
         {
@@ -116,6 +152,9 @@ namespace SplusXBTMeter
                     LatestBluetoothDevices = newDevices;
                     OnPropertyChanged(nameof(BluetoothDevices));
                     BluetoothDevicesUpdated?.Invoke(_bluetoothDevices);
+
+                    // 发布设备更新事件
+                    EventBus.Publish(new DeviceListUpdatedEvent(newDevices));
                 });
             }
             catch (Exception ex)
@@ -125,6 +164,9 @@ namespace SplusXBTMeter
                     _bluetoothDevices = new List<DeviceBatteryInfo>();
                     BluetoothDevicesUpdated?.Invoke(_bluetoothDevices);
                     Console.WriteLine($"❌ 扫描异常：{ex.Message}");
+
+                    // 也可以发布一个空列表事件，表示设备更新失败
+                    EventBus.Publish(new DeviceListUpdatedEvent(new List<DeviceBatteryInfo>()));
                 });
             }
         }

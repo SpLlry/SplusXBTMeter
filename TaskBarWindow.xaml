@@ -45,7 +45,7 @@
             ItemsSource="{Binding BluetoothDevices}"
             Height="46"
             VerticalAlignment="Center"
-            HorizontalAlignment="Left">
+            HorizontalAlignment="{Binding TaskBarAlignment}">
             <!-- 🔥 核心：安全靠右，不破坏任何样式 -->
 
             <ItemsControl.ItemsPanel>
