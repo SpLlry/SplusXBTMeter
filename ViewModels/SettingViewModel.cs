@@ -2,22 +2,22 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using SplusXBTMeter.ViewModels.Base;
-using SplusXBTMeter.core;
+using SplusXBTMeter.Core;
 
 namespace SplusXBTMeter.ViewModels
 {
     public class SettingViewModel : ViewModelBase
     {
-        private ObservableCollection<DeviceBatteryInfo>? _bluetoothDevices = new ObservableCollection<DeviceBatteryInfo>();
+        private ObservableCollection<Core.DeviceBatteryInfo>? _bluetoothDevices = new ObservableCollection<Core.DeviceBatteryInfo>();
         private string _selectedSkin = "Default";
         private bool _isStartup;
         private bool _isShowTaskBar;
         private bool _isShowMain;
 
-        public ObservableCollection<DeviceBatteryInfo>? BluetoothDevices
+        public ObservableCollection<Core.DeviceBatteryInfo>? BluetoothDevices
         {
             get => _bluetoothDevices;
-            set => SetProperty(ref _bluetoothDevices, value ?? new ObservableCollection<DeviceBatteryInfo>());
+            set => SetProperty(ref _bluetoothDevices, value ?? new ObservableCollection<Core.DeviceBatteryInfo>());
         }
 
         public List<string> SkinList { get; } = ["Default", "Wave"];
@@ -109,7 +109,7 @@ namespace SplusXBTMeter.ViewModels
             Application.Current?.Dispatcher.Invoke(() =>
             {
                 Console.WriteLine($"设置窗口收到设备更新，共 {e.Devices.Count} 个设备");
-                List<DeviceBatteryInfo> devices = e.Devices;
+                List<Core.DeviceBatteryInfo> devices = e.Devices;
                 BluetoothDevices?.Clear();
                 if (devices != null)
                 {
@@ -126,7 +126,7 @@ namespace SplusXBTMeter.ViewModels
             });
         }
 
-        public void EditDevice(DeviceBatteryInfo device)
+        public void EditDevice(Core.DeviceBatteryInfo device)
         {
             var cloneDevice = device.Clone();
             var editWindow = new DeviceDiyWindow(cloneDevice);

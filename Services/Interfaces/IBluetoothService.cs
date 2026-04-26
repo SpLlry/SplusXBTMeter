@@ -5,9 +5,9 @@ namespace SplusXBTMeter.Services.Interfaces
 {
     public interface IBluetoothService
     {
-        Task<List<DeviceBatteryInfo>> GetAllBluetoothDevicesBatteryAsync();
+        Task<List<Core.DeviceBatteryInfo>> GetAllBluetoothDevicesBatteryAsync();
         void StartMonitoring();
         void StopMonitoring();
-        event Action<List<DeviceBatteryInfo>?>? BluetoothDevicesUpdated;
+        event Action<List<Core.DeviceBatteryInfo>?>? BluetoothDevicesUpdated;
     }
 }

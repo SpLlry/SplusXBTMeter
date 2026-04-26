@@ -5,7 +5,7 @@ using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Enumeration;
 using Windows.Storage.Streams;
 
-namespace SplusXBTMeter
+namespace SplusXBTMeter.Core
 {
     /// <summary>
     /// .NET 6 Windows 原生蓝牙服务（官方API，无平台异常，真读电量）

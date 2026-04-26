@@ -3,7 +3,7 @@ using HandyControl; // 🔥 修复：添加根命名空间（解决 ApplicationT
 using HandyControl.Controls;
 using Microsoft.Win32;
 using SplusXBTMeter;
-using SplusXBTMeter.core;
+using SplusXBTMeter.Core;
 using SplusXBTMeter.DI;
 using SplusXBTMeter.ViewModels;
 using System.ComponentModel;

@@ -4,7 +4,7 @@ namespace SplusXBTMeter.ViewModels
 {
     public class DeviceDiyViewModel : ViewModelBase
     {
-        private readonly DeviceBatteryInfo _device;
+        private readonly Core.DeviceBatteryInfo _device;
         private string _name;
         private string _address;
         private bool _isShow;
@@ -27,7 +27,7 @@ namespace SplusXBTMeter.ViewModels
             set => SetProperty(ref _isShow, value);
         }
 
-        public DeviceDiyViewModel(DeviceBatteryInfo device)
+        public DeviceDiyViewModel(Core.DeviceBatteryInfo device)
         {
             _device = device;
             _name = device.Name ?? string.Empty;

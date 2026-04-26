@@ -1,4 +1,4 @@
-﻿using SplusXBTMeter.core;
+﻿using SplusXBTMeter.Core;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
