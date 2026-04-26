@@ -1,0 +1,53 @@
+<hc:Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    x:Class="SplusXBTMeter.DeviceDiyWindow"
+    Title="编辑设备属性"
+    Height="274"
+    Width="300"
+    Icon="pack://application:,,,/app.ico"
+    HorizontalAlignment="Center"
+    WindowStartupLocation="CenterScreen"
+    ResizeMode="NoResize">
+    <Grid Margin="15,15,15,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="55"/>
+        </Grid.RowDefinitions>
+
+        <hc:TextBox
+            Grid.Row="0"
+            Text="{Binding Address, Mode=OneWay}"
+            IsEnabled="False"
+            hc:TitleElement.Title="MAC地址"
+            Margin="0 5 0 0" />
+
+        <hc:TextBox
+            Grid.Row="1"
+            Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            hc:TitleElement.Title="设备名称"
+            Margin="0,5,0,0"/>
+
+        <CheckBox
+            Grid.Row="2"
+            IsChecked="{Binding IsShow, Mode=TwoWay}"
+            Content="显示设备"
+            Margin="0 5 0 0"
+            Style="{StaticResource CheckBoxBaseStyle}"
+            FontSize="14"/>
+
+        <StackPanel
+            Grid.Row="3"
+            Orientation="Horizontal"
+            Margin="187,2,3,0">
+            <Button
+                Content="保存" Click="Btn_Save" Width="80"
+                Style="{StaticResource ButtonSuccess}"
+                RenderTransformOrigin="0.2,0.581" />
+        </StackPanel>
+    </Grid>
+</hc:Window>

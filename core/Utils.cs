@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -256,6 +256,107 @@ namespace SplusXBTMeter.core
             {
                 Console.WriteLine($"❌ 检查开机自启状态失败：{ex.Message}");
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// 将WPF窗口嵌入到任务栏
+        /// </summary>
+        /// <param name="window">要嵌入的WPF窗口</param>
+        /// <returns>任务栏容器句柄，如果嵌入失败则返回IntPtr.Zero</returns>
+        public static IntPtr EmbedWindowToTaskbar(Window window)
+        {
+            try
+            {
+                IntPtr taskbarContainerHwnd = Win32Api.FindWindow("Shell_TrayWnd", "");
+                if (taskbarContainerHwnd == IntPtr.Zero)
+                {
+                    Console.WriteLine("未找到任务栏容器！");
+                    return IntPtr.Zero;
+                }
+
+                IntPtr wpfHwnd = GetWpfWindowHwnd(window);
+
+                uint style = (uint)Win32Api.GetWindowLongPtr(wpfHwnd, Win32Api.GWL_STYLE);
+                style |= Win32Api.WS_CHILD | Win32Api.WS_VISIBLE;
+                Win32Api.SetWindowLongPtr(wpfHwnd, Win32Api.GWL_STYLE, (IntPtr)style);
+
+                uint exStyle = (uint)Win32Api.GetWindowLongPtr(wpfHwnd, Win32Api.GWL_EXSTYLE);
+                exStyle |= 0x00000020; // WS_EX_TRANSPARENT：透明不拦截鼠标
+                exStyle |= 0x00000004; // WS_EX_NOPARENTNOTIFY：不拦截父窗口/系统消息
+                Win32Api.SetWindowLongPtr(wpfHwnd, Win32Api.GWL_EXSTYLE, (IntPtr)exStyle);
+
+                Win32Api.SetParent(wpfHwnd, taskbarContainerHwnd);
+                AdjustWindowToTaskbar(window, taskbarContainerHwnd);
+
+                return taskbarContainerHwnd;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"嵌入任务栏失败：{ex.Message}");
+                return IntPtr.Zero;
+            }
+        }
+
+        /// <summary>
+        /// 调整窗口到任务栏位置
+        /// </summary>
+        /// <param name="window">WPF窗口</param>
+        /// <param name="taskbarContainerHwnd">任务栏容器句柄</param>
+        public static void AdjustWindowToTaskbar(Window window, IntPtr taskbarContainerHwnd)
+        {
+            if (taskbarContainerHwnd == IntPtr.Zero || window == null)
+                return;
+
+            try
+            {
+                Win32Api.GetWindowRect(taskbarContainerHwnd, out Win32Api.RECT containerRect);
+                IntPtr wpfHwnd = GetWpfWindowHwnd(window);
+                TaskBarInfo t = GetTaskBarInfo();
+                int alignment = GetTaskbarAlignment();
+
+                Console.WriteLine($"任务栏位置：Left={t.Left}, Top={t.Top}, Right={t.Right}, Bottom={t.Bottom}");
+                Console.WriteLine($"容器位置：Left={window.Width * GetDpiScale(window)}");
+
+                int pos = (int)(window.Width * GetDpiScale(window));
+                if (alignment == 1)
+                {
+                    pos = 0;
+                }
+
+                Win32Api.SetWindowPos(
+                    wpfHwnd,
+                    IntPtr.Zero,
+                    t.Left - pos,
+                    0,
+                    containerRect.Right - containerRect.Left,
+                    containerRect.Bottom - containerRect.Top,
+                    Win32Api.SWP_NOZORDER | Win32Api.SWP_NOACTIVATE
+                );
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"调整窗口位置失败：{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 从任务栏中移除窗口
+        /// </summary>
+        /// <param name="window">WPF窗口</param>
+        public static void RemoveWindowFromTaskbar(Window window)
+        {
+            if (window == null)
+                return;
+
+            try
+            {
+                IntPtr wpfHwnd = GetWpfWindowHwnd(window);
+                Win32Api.SetParent(wpfHwnd, IntPtr.Zero);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"从任务栏移除窗口失败：{ex.Message}");
             }
         }
     }

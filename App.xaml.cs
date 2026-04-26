@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows;
+using SplusXBTMeter.DI;
+using SplusXBTMeter.core;
 
 namespace SplusXBTMeter
 {
     public partial class App : Application
     {
-        // ✅ 关键：在静态构造函数中订阅（最早时机）
         static App()
         {
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
@@ -17,14 +17,6 @@ namespace SplusXBTMeter
 
         private static Mutex? _appMutex;
         public static MainWindow? MainWindowInstance { get; private set; }
-
-        [DllImport("user32.dll")]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        private const int SW_RESTORE = 9;
 
         public static readonly Config Config = new Config(
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "config.ini")
@@ -34,7 +26,6 @@ namespace SplusXBTMeter
         {
             base.OnStartup(e);
 
-            // 单实例检测
             bool isFirstInstance;
             var tempMutex = new Mutex(true, "SplusXBTMeterMutex_2026", out isFirstInstance);
 
@@ -47,19 +38,18 @@ namespace SplusXBTMeter
             }
 
             _appMutex = tempMutex;
+
+            ServiceLocator.Initialize();
+
             MainWindowInstance = new MainWindow();
             MainWindowInstance.Hide();
         }
 
-        // ✅ 改进的 AssemblyResolve 处理器
         private static Assembly? ResolveAssembly(object sender, ResolveEventArgs args)
         {
             try
             {
-                // 获取程序集名称（去掉版本等信息）
                 var assemblyName = new AssemblyName(args.Name).Name + ".dll";
-
-                // 尝试从 libs 目录加载
                 var libsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "libs", assemblyName);
 
                 if (File.Exists(libsPath))
@@ -67,7 +57,6 @@ namespace SplusXBTMeter
                     return Assembly.LoadFrom(libsPath);
                 }
 
-                // 如果 libs 目录没有，尝试根目录（备用）
                 var rootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyName);
                 if (File.Exists(rootPath))
                 {
@@ -76,7 +65,6 @@ namespace SplusXBTMeter
             }
             catch
             {
-                // 忽略异常
             }
 
             return null;
@@ -89,8 +77,8 @@ namespace SplusXBTMeter
             {
                 if (process.Id != currentProcess.Id && process.MainWindowHandle != IntPtr.Zero)
                 {
-                    ShowWindow(process.MainWindowHandle, SW_RESTORE);
-                    SetForegroundWindow(process.MainWindowHandle);
+                    Win32Api.ShowWindow(process.MainWindowHandle, Win32Api.SW_RESTORE);
+                    Win32Api.SetForegroundWindow(process.MainWindowHandle);
                     return;
                 }
             }
@@ -122,9 +110,9 @@ namespace SplusXBTMeter
             }
             catch
             {
-                // ignored
             }
         }
+
         public static void ReleaseMutex()
         {
             try
