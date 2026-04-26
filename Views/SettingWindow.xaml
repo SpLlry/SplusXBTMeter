@@ -7,7 +7,7 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   x:Class="SplusXBTMeter.SettingWindow"
   mc:Ignorable="d"
-  Icon="pack://application:,,,/app.ico"
+  Icon="pack://application:,,,/App.ico"
   Title="设置"
   Height="506"
   Width="400"

@@ -18,7 +18,7 @@ namespace SplusXBTMeter.Services
         {
             _btScan = new Core.Bluetooth.BtScan
             {
-                UseMockData = true
+                UseMockData = false
             };
             _scanTimer = new System.Timers.Timer(3000);
             _scanTimer.Elapsed += async (s, e) => await UpdateBluetoothDataAsync();

@@ -14,7 +14,7 @@
           ShowInTaskbar="False"
           BorderThickness="0"
           Topmost="False"
-          Icon="pack://application:,,,/app.ico"
+          Icon="pack://application:,,,/App.ico"
           ResizeMode="NoResize">
 
     <hc:Window.Resources>

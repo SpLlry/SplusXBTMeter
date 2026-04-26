@@ -1,5 +1,6 @@
-using System.Windows;
 using SplusXBTMeter.ViewModels;
+using System.Reflection;
+using System.Windows;
 
 namespace SplusXBTMeter
 {
@@ -7,6 +8,7 @@ namespace SplusXBTMeter
     {
         public AboutWindow()
         {
+        
             InitializeComponent();
             DataContext = new AboutViewModel();
         }
