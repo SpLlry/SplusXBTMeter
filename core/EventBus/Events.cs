@@ -1,4 +1,4 @@
-﻿namespace SplusXBTMeter.core
+﻿namespace SplusXBTMeter.Core
 {
     // 设置变更事件
     public record SettingsChangedEvent(string SettingName, object? OldValue, object? NewValue);

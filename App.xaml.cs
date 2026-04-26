@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using SplusXBTMeter.DI;
-using SplusXBTMeter.core;
+using SplusXBTMeter.Core;
 
 namespace SplusXBTMeter
 {

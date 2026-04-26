@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using HandyControl.Controls;
 using SplusXBTMeter;
-using SplusXBTMeter.core;
+using SplusXBTMeter.Core;
 using SplusXBTMeter.ViewModels;
 
 namespace SplusXBTMeter

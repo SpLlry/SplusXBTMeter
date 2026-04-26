@@ -1,22 +1,22 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using SplusXBTMeter.ViewModels.Base;
-using SplusXBTMeter.core;
+using SplusXBTMeter.Core;
 
 namespace SplusXBTMeter.ViewModels
 {
     public class TaskBarViewModel : ViewModelBase
     {
-        private ObservableCollection<DeviceBatteryInfo>? _bluetoothDevices = new ObservableCollection<DeviceBatteryInfo>();
+        private ObservableCollection<Core.DeviceBatteryInfo>? _bluetoothDevices = new ObservableCollection<Core.DeviceBatteryInfo>();
         private HorizontalAlignment _taskBarAlignment = HorizontalAlignment.Right;
         private bool _isWaveEffect;
 
         public event Action? TaskbarAlignmentChanged;
 
-        public ObservableCollection<DeviceBatteryInfo>? BluetoothDevices
+        public ObservableCollection<Core.DeviceBatteryInfo>? BluetoothDevices
         {
             get => _bluetoothDevices;
-            set => SetProperty(ref _bluetoothDevices, value ?? new ObservableCollection<DeviceBatteryInfo>());
+            set => SetProperty(ref _bluetoothDevices, value ?? new ObservableCollection<Core.DeviceBatteryInfo>());
         }
 
         public HorizontalAlignment TaskBarAlignment
@@ -77,7 +77,7 @@ namespace SplusXBTMeter.ViewModels
             Application.Current.Dispatcher.Invoke(() =>
             {
                 Console.WriteLine($"任务栏窗口收到设备更新，共 {e.Devices.Count} 个设备");
-                List<DeviceBatteryInfo> devices = e.Devices;
+                List<Core.DeviceBatteryInfo> devices = e.Devices;
                 BluetoothDevices?.Clear();
                 if (devices != null)
                 {

@@ -3,18 +3,18 @@ using System.Windows;
 using SplusXBTMeter.DI;
 using SplusXBTMeter.Services.Interfaces;
 using SplusXBTMeter.ViewModels.Base;
-using SplusXBTMeter.core;
+using SplusXBTMeter.Core;
 
 namespace SplusXBTMeter.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
         private readonly IBluetoothService _bluetoothService;
-        private List<DeviceBatteryInfo>? _bluetoothDevices = new();
+        private List<Core.DeviceBatteryInfo>? _bluetoothDevices = new();
         private SettingWindow? _settingWindow;
         private TaskbarMonitor? _taskbarMonitor;
 
-        public List<DeviceBatteryInfo>? BluetoothDevices
+        public List<Core.DeviceBatteryInfo>? BluetoothDevices
         {
             get => _bluetoothDevices;
             set => SetProperty(ref _bluetoothDevices, value);
@@ -54,7 +54,7 @@ namespace SplusXBTMeter.ViewModels
             }
         }
 
-        private void OnBluetoothDevicesUpdated(List<DeviceBatteryInfo>? devices)
+        private void OnBluetoothDevicesUpdated(List<Core.DeviceBatteryInfo>? devices)
         {
             BluetoothDevices = devices;
         }

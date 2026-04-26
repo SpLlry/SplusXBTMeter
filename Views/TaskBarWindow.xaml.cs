@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using SplusXBTMeter;
-using SplusXBTMeter.core;
+using SplusXBTMeter.Core;
 using SplusXBTMeter.ViewModels;
 
 namespace SplusXBTMeter

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SplusXBTMeter.core
+namespace SplusXBTMeter.Core
 {
     /// <summary>
     /// 支持主动拉取数据的事件总线

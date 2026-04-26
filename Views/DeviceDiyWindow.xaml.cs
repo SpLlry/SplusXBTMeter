@@ -9,7 +9,7 @@ namespace SplusXBTMeter
     {
         private readonly DeviceDiyViewModel _viewModel;
 
-        public DeviceDiyWindow(DeviceBatteryInfo device)
+        public DeviceDiyWindow(Core.DeviceBatteryInfo device)
         {
             InitializeComponent();
             _viewModel = new DeviceDiyViewModel(device);

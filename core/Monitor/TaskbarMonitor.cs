@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using static Win32Api;
 
-namespace SplusXBTMeter.core
+namespace SplusXBTMeter.Core
 {
     public class TaskbarMonitor : IDisposable
     {
