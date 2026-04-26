@@ -233,6 +233,8 @@ public static class Win32Api
     public const uint WS_VISIBLE = 0x10000000;
     public const int WS_POPUP = unchecked((int)0x80000000);
     public const int SW_HIDE = 0;
+    public const int SW_RESTORE = 9;
+    public const int SW_SHOW = 5;
 
     public const uint WS_EX_TRANSPARENT = 0x00000020;
     public const uint WS_EX_LAYERED = 0x00080000;

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<!-- 动态切换：调试模式=控制台窗口，发布模式=纯桌面应用 -->
@@ -35,6 +35,10 @@
 		<PackageReference Include="HandyControls.Lang.zh-CN" Version="3.6.0" />
 		<PackageReference Include="InTheHand.BluetoothLE" Version="4.0.44" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.6" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="app.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
