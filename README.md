@@ -1,6 +1,6 @@
-# BTPowerNotice 项目说明
+# SplusXBTMeter 项目说明
 ## 1. 项目概述
-BTPowerNotice是一个实用的蓝牙设备电量监控工具,基于 Python 和 PyQt6 开发,通过直观的系统托盘和任务栏帮助用户实时了解蓝牙设备的电量状态，避免因设备电量耗尽而影响使用。项目采用现代化的技术栈，具有良好的用户体验和系统集成度。
+SplusXBTMeter是一个实用的蓝牙设备电量监控工具,基于c#开发,通过直观的系统托盘和任务栏帮助用户实时了解蓝牙设备的电量状态，避免因设备电量耗尽而影响使用。项目采用现代化的技术栈，具有良好的用户体验和系统集成度。
 
 ### 1.1下载地址
 
@@ -81,27 +81,7 @@ BTPowerNotice是一个实用的蓝牙设备电量监控工具,基于 Python 和 
 
 
 ## 6. 安装与运行
-1. 克隆项目 ：
-   
-   ```
-   git clone https://github.com/SpLlry/BTPowerNotice.git
-   cd BTPowerNotice
-   ```
-2. 安装依赖 ：
-   
-   ```
-   pip install -r requirements.txt
-   ```
-3. 运行程序 ：
-   
-   ```
-   python main.py
-   ```
-4. 打包成可执行文件 ：
-   
-   ```
-   python pack.py
-   ```
+暂无
 ## 7. 使用说明
 1. 首次运行 ：程序会自动扫描附近的蓝牙设备
 2. 系统托盘 ：
