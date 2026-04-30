@@ -1,10 +1,10 @@
-using System;
+using SplusXBTMeter.Core;
+using SplusXBTMeter.DI;
+using SplusXBTMeter.Views;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
-using SplusXBTMeter.DI;
-using SplusXBTMeter.Core;
 
 namespace SplusXBTMeter
 {
@@ -43,8 +43,17 @@ namespace SplusXBTMeter
 
             MainWindowInstance = new MainWindow();
             MainWindowInstance.Hide();
+            CheckUpdateInfo();
         }
-
+        private static async void CheckUpdateInfo()
+        {
+            var result = await CheckUpdate.GetUpdateInfo();
+            if (result.Code == 0 && result.Data != null)
+            {
+                var updateWindow = new UpdateWindow(result.Data.Body, result.Data.DownloadUrl);
+                updateWindow.Show();
+            }
+        }
         private static Assembly? ResolveAssembly(object sender, ResolveEventArgs args)
         {
             try
@@ -117,9 +126,27 @@ namespace SplusXBTMeter
         {
             try
             {
-                _appMutex?.ReleaseMutex();
-                _appMutex?.Close();
-                _appMutex = null;
+                if (_appMutex != null)
+                {
+                    bool ownsMutex = false;
+                    try
+                    {
+                        ownsMutex = _appMutex.WaitOne(0);
+                        if (ownsMutex)
+                        {
+                            _appMutex.ReleaseMutex();
+                        }
+                    }
+                    finally
+                    {
+                        if (!ownsMutex)
+                        {
+                            // 当前线程不拥有互斥锁，尝试直接关闭
+                        }
+                        _appMutex.Close();
+                        _appMutex = null;
+                    }
+                }
             }
             catch (Exception ex)
             {

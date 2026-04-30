@@ -1,0 +1,43 @@
+﻿<hc:Window x:Class="SplusXBTMeter.Views.UpdateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol" 
+        xmlns:local="clr-namespace:SplusXBTMeter.Views"
+        xmlns:mdxam="clr-namespace:MdXaml;assembly=MdXaml"
+        mc:Ignorable="d"
+        Title="更新日志" Height="450" Width="345"
+        Icon="/App.ico"
+        WindowStartupLocation="CenterScreen" 
+           ResizeMode="NoResize"
+           WindowStyle="ToolWindow"
+       >
+    <!-- 你的深色背景 -->
+
+
+    <Grid>
+        <!-- 直接绑定 ViewModel 中的 UpdateText -->
+        <mdxam:MarkdownScrollViewer 
+            Markdown="{Binding UpdateText}" 
+            Margin="5,5,5,65" 
+            BorderThickness="1,1,1,1" 
+            BorderBrush="#7FE9E8E8" Padding="5,0,5,0" />
+        <Button 
+             Style="{StaticResource ButtonPrimary}" 
+            Content="立即更新" 
+            RenderTransformOrigin="-0.223,0.085" 
+            Margin="10,370,195,0"  
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Stretch" Height="36" 
+            Click="Button_Click_Jump" />
+        <Button 
+            Style="{StaticResource ButtonDanger}"
+            Content="下次再说" 
+            RenderTransformOrigin="-0.223,0.085" 
+            Margin="195,369,10,0"  
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Stretch" Height="36" 
+            Click="Button_Click_Close" />
+    </Grid>
+</hc:Window>

@@ -1,24 +1,15 @@
 #nullable enable
-using HandyControl; // 🔥 修复：添加根命名空间（解决 ApplicationTheme 找不到）
 using HandyControl.Controls;
-using Microsoft.Win32;
-using SplusXBTMeter;
-using SplusXBTMeter.Core;
 using SplusXBTMeter.DI;
 using SplusXBTMeter.ViewModels;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
 using System.Windows;
-using System.Windows.Threading;
-using static Win32Api;
 
 namespace SplusXBTMeter
 {
     public partial class MainWindow : HandyControl.Controls.Window
     {
         private TaskBarWindow? taskBarWindow;
-        private MainViewModel? _viewModel;
+        private readonly MainViewModel? _viewModel;
 
         public MainWindow()
         {

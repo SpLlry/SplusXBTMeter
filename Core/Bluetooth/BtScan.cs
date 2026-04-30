@@ -1,6 +1,4 @@
-﻿using SplusXBTMeter;
-
-namespace SplusXBTMeter.Core.Bluetooth
+﻿namespace SplusXBTMeter.Core.Bluetooth
 {
     /// <summary>
     /// 蓝牙扫描总入口：整合经典蓝牙(BTC) + 低功耗蓝牙(BLE)
@@ -22,7 +20,7 @@ namespace SplusXBTMeter.Core.Bluetooth
         public async Task<List<DeviceBatteryInfo>> GetAllBluetoothDevicesBatteryAsync()
         {
             // 优先返回模拟数据（调试模式）
-            Console.WriteLine($"UseMockData:{UseMockData}");
+            // Console.WriteLine($"UseMockData:{UseMockData}");
             if (UseMockData)
             {
                 return await Task.FromResult(GenerateMockBluetoothDevices());

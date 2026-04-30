@@ -1,9 +1,8 @@
-using System.Collections.Generic;
-using System.Windows;
+using SplusXBTMeter.Core;
 using SplusXBTMeter.DI;
 using SplusXBTMeter.Services.Interfaces;
 using SplusXBTMeter.ViewModels.Base;
-using SplusXBTMeter.Core;
+using System.Windows;
 
 namespace SplusXBTMeter.ViewModels
 {
@@ -12,7 +11,7 @@ namespace SplusXBTMeter.ViewModels
         private readonly IBluetoothService _bluetoothService;
         private List<Core.DeviceBatteryInfo>? _bluetoothDevices = new();
         private SettingWindow? _settingWindow;
-        private TaskbarMonitor? _taskbarMonitor;
+        private Core.Monitor.TaskbarMonitor? _taskbarMonitor;
 
         public List<Core.DeviceBatteryInfo>? BluetoothDevices
         {
@@ -33,7 +32,7 @@ namespace SplusXBTMeter.ViewModels
         {
             _bluetoothService.StartMonitoring();
             SystemTray.Init();
-            _taskbarMonitor = new TaskbarMonitor();
+            _taskbarMonitor = new Core.Monitor.TaskbarMonitor();
             _taskbarMonitor.TaskbarAlignmentChanged += OnTaskbarAlignmentChanged;
             _taskbarMonitor.TrayNotifyWndChanged += OnTrayNotifyWndChanged;
             _taskbarMonitor.Start();
@@ -46,6 +45,14 @@ namespace SplusXBTMeter.ViewModels
             if (_settingWindow == null || !_settingWindow.IsVisible)
             {
                 _settingWindow = new SettingWindow();
+
+                // 🔒 新增：窗口关闭时自动清理引用
+                _settingWindow.Closed += (sender, e) =>
+                {
+                    _settingWindow = null;
+                    Console.WriteLine("设置窗口已关闭，引用已清理");
+                };
+
                 _settingWindow.Show();
             }
             else
@@ -98,7 +105,13 @@ namespace SplusXBTMeter.ViewModels
             _bluetoothService.StopMonitoring();
             _bluetoothService.BluetoothDevicesUpdated -= OnBluetoothDevicesUpdated;
             _taskbarMonitor?.Dispose();
-            _settingWindow?.Close();
+            // 🔒 确保窗口被正确关闭
+            if (_settingWindow != null)
+            {
+                _settingWindow.Closed -= (sender, e) => _settingWindow = null;
+                _settingWindow.Close();
+                _settingWindow = null;
+            }
             SystemParameters.StaticPropertyChanged -= SystemParameters_StaticPropertyChanged;
         }
     }

@@ -67,10 +67,8 @@
                                     <DataTrigger Binding="{Binding IsShow}" Value="False">
                                         <Setter Property="Visibility" Value="Collapsed"/>
                                     </DataTrigger>
-                                    <!-- 当 IsConnected 为 false 时隐藏 -->
-                                    <DataTrigger Binding="{Binding IsConnected}" Value="False">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                    </DataTrigger>
+                            
+                        
                                 </Style.Triggers>
                             </Style>
                         </hc:SimplePanel.Style>

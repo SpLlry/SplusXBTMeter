@@ -11,6 +11,7 @@
                 <!-- HandyControl 核心样式资源 -->
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
                 <!-- 使用自定义皮肤 -->
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
                 <!-- <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/> -->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

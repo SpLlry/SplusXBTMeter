@@ -74,13 +74,16 @@
       Margin="0,10"
       HorizontalAlignment="Center"
     >
-      <Hyperlink NavigateUri="https://github.com/SpLlry/SplusXBTMeter">
+       <Hyperlink NavigateUri="{Binding GitHubUrl}"  
+                  RequestNavigate="Hyperlink_RequestNavigate">
 GitHub
 </Hyperlink>
-      <Hyperlink NavigateUri="https://gitee.com/SpLlry/SplusXBTMeter">
+       <Hyperlink NavigateUri="{Binding GiteeUrl}"  
+                  RequestNavigate="Hyperlink_RequestNavigate">
 Gitee
 </Hyperlink>
-      <Hyperlink NavigateUri="https://github.com/SpLlry/SplusXBTMeter">
+      <Hyperlink NavigateUri="{Binding GitHubUrl}"
+                     RequestNavigate="Hyperlink_RequestNavigate">
 打赏作者
 </Hyperlink>
     </TextBlock>
