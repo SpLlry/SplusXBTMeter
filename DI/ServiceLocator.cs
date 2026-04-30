@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using SplusXBTMeter.Services;
 using SplusXBTMeter.Services.Interfaces;
 

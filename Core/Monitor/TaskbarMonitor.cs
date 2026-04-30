@@ -1,17 +1,15 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Threading;
-using static Win32Api;
+using static SplusXBTMeter.Core.Win32Api;
 
-namespace SplusXBTMeter.Core
+namespace SplusXBTMeter.Core.Monitor
 {
     public class TaskbarMonitor : IDisposable
     {
         private IntPtr _regKeyHandle = IntPtr.Zero;
         private IntPtr _trayNotifyWndHookHandle = IntPtr.Zero;
         private WinEventDelegate? _trayNotifyWndEventDelegate;
-        private Dispatcher? _dispatcher;
+        private readonly Dispatcher? _dispatcher;
         private RECT _lastTrayNotifyWndRect;
 
         // 任务栏对齐方式变化事件（0=左，1=中）
@@ -149,7 +147,7 @@ namespace SplusXBTMeter.Core
         {
             // 检查是否是 TrayNotifyWnd 窗口
             IntPtr trayNotifyWndHwnd = FindWindowEx(
-                FindWindow("Shell_TrayWnd", ""),
+                FindWindowW("Shell_TrayWnd", ""),
                 IntPtr.Zero,
                 "TrayNotifyWnd",
                  "");
@@ -165,7 +163,7 @@ namespace SplusXBTMeter.Core
             try
             {
                 IntPtr trayNotifyWndHwnd = FindWindowEx(
-                    FindWindow("Shell_TrayWnd", ""),
+                    FindWindowW("Shell_TrayWnd", ""),
                     IntPtr.Zero,
                     "TrayNotifyWnd",
                      "");
@@ -195,34 +193,13 @@ namespace SplusXBTMeter.Core
             }
         }
 
-        private int ReadRegistryValue(IntPtr keyHandle, string valueName)
-        {
-            int bufferSize = 4;
-            byte[] buffer = new byte[bufferSize];
-            int type;
-
-            int result = RegQueryValueEx(
-                keyHandle,
-                valueName,
-                0,
-                out type,
-                buffer,
-                ref bufferSize);
-
-            if (result != 0)
-            {
-                throw new Exception($"无法读取注册表值 {valueName}: {result}");
-            }
-
-            return BitConverter.ToInt32(buffer, 0);
-        }
 
         public void Stop()
         {
             // 停止注册表监听
             if (_regKeyHandle != IntPtr.Zero)
             {
-                RegCloseKey(_regKeyHandle);
+                _ = RegCloseKey(_regKeyHandle);
                 _regKeyHandle = IntPtr.Zero;
             }
 

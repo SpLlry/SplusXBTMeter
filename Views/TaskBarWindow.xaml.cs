@@ -1,13 +1,9 @@
 #nullable enable
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using SplusXBTMeter.Core;
+using SplusXBTMeter.ViewModels;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
-using SplusXBTMeter;
-using SplusXBTMeter.Core;
-using SplusXBTMeter.ViewModels;
 
 namespace SplusXBTMeter
 {

@@ -11,11 +11,11 @@
  */
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // 程序集常规信息
 [assembly: AssemblyTitle("SplusXBTMeter蓝牙设备电量显示")]
+[assembly: AssemblyDescription("蓝牙设备电量监控与显示工具")]
 [assembly: AssemblyCompany("Splusx")]
 [assembly: AssemblyProduct("SplusXBTMeter")]
 [assembly: AssemblyCopyright("Copyright © Splusx 2026")]
@@ -37,4 +37,4 @@ using System.Runtime.InteropServices;
 // 可以指定所有这些值，也可以使用“生成号”和“修订号”的默认值
 // 通过使用 "*"，如下所示:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.2.2.0")]
+[assembly: AssemblyVersion("0.2.3")]

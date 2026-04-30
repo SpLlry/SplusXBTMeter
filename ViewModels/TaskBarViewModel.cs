@@ -1,7 +1,7 @@
+using SplusXBTMeter.Core;
+using SplusXBTMeter.ViewModels.Base;
 using System.Collections.ObjectModel;
 using System.Windows;
-using SplusXBTMeter.ViewModels.Base;
-using SplusXBTMeter.Core;
 
 namespace SplusXBTMeter.ViewModels
 {
@@ -46,6 +46,7 @@ namespace SplusXBTMeter.ViewModels
                 string? skin = App.Config.getVal("settings", "skin", "Default");
                 Console.WriteLine($"skin:{skin}");
                 IsWaveEffect = skin == "Wave";
+
             }
             catch
             {

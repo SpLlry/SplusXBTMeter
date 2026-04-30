@@ -1,15 +1,8 @@
 #nullable enable
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Controls;
-using HandyControl.Controls;
-using SplusXBTMeter;
 using SplusXBTMeter.Core;
 using SplusXBTMeter.ViewModels;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace SplusXBTMeter
 {
@@ -78,7 +71,14 @@ namespace SplusXBTMeter
                 _viewModel.IsStartup = checkBox?.IsChecked == true;
             }
         }
-
+        private void IsShowNoConn_Checked(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel != null)
+            {
+                var checkBox = sender as System.Windows.Controls.CheckBox;
+                _viewModel.IsShowNoConn = checkBox?.IsChecked == true;
+            }
+        }
         private void IsShowTaskBar_Checked(object sender, System.Windows.RoutedEventArgs e)
         {
             if (_viewModel != null)
@@ -96,5 +96,7 @@ namespace SplusXBTMeter
                 _viewModel.IsShowMain = checkBox?.IsChecked == true;
             }
         }
+
+
     }
 }

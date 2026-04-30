@@ -1,9 +1,5 @@
-using InTheHand.Bluetooth;
 using SplusXBTMeter.Core;
 using SplusXBTMeter.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SplusXBTMeter.Services
 {
@@ -22,6 +18,7 @@ namespace SplusXBTMeter.Services
             };
             _scanTimer = new System.Timers.Timer(3000);
             _scanTimer.Elapsed += async (s, e) => await UpdateBluetoothDataAsync();
+
         }
 
         public async Task<List<Core.DeviceBatteryInfo>> GetAllBluetoothDevicesBatteryAsync()
@@ -31,6 +28,8 @@ namespace SplusXBTMeter.Services
 
         public void StartMonitoring()
         {
+            // 👇 加上这一行：立即执行一次
+            _ = UpdateBluetoothDataAsync();
             _scanTimer.Start();
         }
 
@@ -44,20 +43,27 @@ namespace SplusXBTMeter.Services
             try
             {
                 var newDevices = await _btScan.GetAllBluetoothDevicesBatteryAsync();
+                bool IsShowNoconn = App.Config.getVal("settings", "ShowNoConn", "1") == "1";
                 for (int i = 0; i < newDevices.Count; i++)
                 {
-                    var Mac = newDevices[i].Mac;
-                    newDevices[i].IsShow = !(App.Config.getVal("CustomDeviceShow", Mac, "1") == "0");
-                    newDevices[i].Name = App.Config.getVal("CustomDeviceName", Mac, newDevices[i].Name);
+
+                    string Mac = newDevices[i].Mac;
+                    string Name = newDevices[i].Name;
+                    bool IsConnected = newDevices[i].IsConnected;
+                    //div设备显示状态
+                    bool CustomDeviceShow = !(App.Config.getVal("CustomDeviceShow", Mac, "1") == "0");
+
+
+                    newDevices[i].IsShow = CustomDeviceShow && (IsShowNoconn && !IsConnected) || CustomDeviceShow && (IsConnected);
+                    newDevices[i].Name = App.Config.getVal("CustomDeviceName", Mac, Name);
+                    Console.WriteLine($"{newDevices[i].Name}-{Name}");
                 }
 
-                BluetoothDevicesUpdated?.Invoke(newDevices);
                 EventBus.Publish(new DeviceListUpdatedEvent(newDevices));
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"❌ 扫描异常：{ex.Message}");
-                BluetoothDevicesUpdated?.Invoke(new List<Core.DeviceBatteryInfo>());
                 EventBus.Publish(new DeviceListUpdatedEvent(new List<Core.DeviceBatteryInfo>()));
             }
         }

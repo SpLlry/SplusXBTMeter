@@ -44,13 +44,13 @@ namespace SplusXBTMeter.Core.Bluetooth
         private const uint CR_SUCCESS = 0x00000000;
 
         // 🔥 修复：去掉 readonly，解决 ref 参数报错
-        private static DEVPROPKEY DEVPKEY_BLUETOOTH_BATTERY = new DEVPROPKEY
+        private static DEVPROPKEY DEVPKEY_BLUETOOTH_BATTERY = new()
         {
-            fmtid = new GUID(0x104EA319, 0x6EE2, 0x4701, new byte[] { 0xBD, 0x47, 0x8D, 0xDB, 0xF4, 0x25, 0xBB, 0xE5 }),
+            fmtid = new GUID(0x104EA319, 0x6EE2, 0x4701, [0xBD, 0x47, 0x8D, 0xDB, 0xF4, 0x25, 0xBB, 0xE5]),
             pid = 2
         };
 
-        [DllImport("CfgMgr32.dll", SetLastError = true)]
+        [DllImport("CfgMgr32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern uint CM_Locate_DevNodeW(out uint devNode, string deviceId, uint flags);
 
         [DllImport("CfgMgr32.dll", SetLastError = true)]
@@ -59,12 +59,12 @@ namespace SplusXBTMeter.Core.Bluetooth
             out byte propValue, ref uint propSize, uint flags);
         #endregion
 
-        private readonly OrderedDictionary _cache = new OrderedDictionary();
+        private readonly OrderedDictionary _cache = [];
         private const int MAX_CACHE = 20;
 
         public async Task<List<DeviceBatteryInfo>> GetConnectedBtcDevicesAsync()
         {
-            List<DeviceBatteryInfo> result = new List<DeviceBatteryInfo>();
+            List<DeviceBatteryInfo> result = [];
             try
             {
                 Debug.WriteLine("=====================================");
@@ -120,7 +120,7 @@ namespace SplusXBTMeter.Core.Bluetooth
             return result;
         }
 
-        private int GetBatteryLevel(string deviceId)
+        private static int GetBatteryLevel(string deviceId)
         {
             try
             {

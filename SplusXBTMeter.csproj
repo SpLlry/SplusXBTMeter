@@ -11,7 +11,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
-		
+
 		<!-- 禁用跨平台兼容性警告 -->
 		<EnablePlatformCompatibilityAnalyzer>false</EnablePlatformCompatibilityAnalyzer>
 
@@ -22,8 +22,10 @@
 
 		<!-- 关键：确保所有依赖都被复制 -->
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-	
-		
+
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<NoWarn>CA1416</NoWarn>
+
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -35,7 +37,7 @@
 		<PackageReference Include="HandyControl" Version="3.5.1" />
 		<PackageReference Include="HandyControls.Lang.zh-CN" Version="3.6.0" />
 		<PackageReference Include="InTheHand.BluetoothLE" Version="4.0.44" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.6" />
+		<PackageReference Include="MdXaml" Version="1.27.0" />
 	</ItemGroup>
 
 	<ItemGroup>

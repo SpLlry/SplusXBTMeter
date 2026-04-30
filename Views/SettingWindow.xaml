@@ -66,14 +66,24 @@
             Click="IsShowTaskBar_Checked"
           />
           <CheckBox
-            x:Name="IsShowMain"
-            Content="显示主窗口(还没做)"
-            Margin="10,5,10,0"
-            VerticalAlignment="Top"
-            Height="24"
-            Click="IsShowMain_Checked"
-          />
-          <hc:Divider
+    x:Name="IsShowMain"
+    Content="显示主窗口(还没做)"
+    Margin="10,5,10,0"
+    VerticalAlignment="Top"
+    Height="24"
+    Click="IsShowMain_Checked"
+  />
+                    <CheckBox
+    x:Name="IsShowNoConn"
+    Content="显示断连设备"
+    Margin="10,5,10,0"
+    VerticalAlignment="Top"
+    Height="24"
+    Click="IsShowNoConn_Checked" 
+    IsChecked="{Binding IsShowNoConn}"
+
+  />
+                    <hc:Divider
             Content="启动设置"
             HorizontalContentAlignment="Left"
             Height="24"
@@ -86,6 +96,7 @@
             VerticalAlignment="Top"
             Height="24"
             Click="IsStartup_Checked"
+                  IsChecked="{Binding IsStartup}"
           />
         </StackPanel>
       </TabItem>
@@ -94,14 +105,40 @@
           ItemsSource="{Binding BluetoothDevices}"
           MouseDoubleClick="ListBox_MouseDoubleClick"
           Height="417"
-          Margin="5,5,5,5"
+          Margin="5,5,5,5" Padding="2,2,2,2"
         >
           <ListBox.ItemTemplate>
             <DataTemplate>
               <!-- 垂直布局 -->
               <StackPanel Margin="3,0">
-                <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Medium" />
-                <TextBlock
+                                <TextBlock FontSize="14" FontWeight="Medium">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <!-- 默认：未连接 -->
+                                            <Setter Property="Text">
+                                                <Setter.Value>
+                                                    <MultiBinding StringFormat="设备：{0}  状态：⛓‍💥">
+                                                        <Binding Path="Name" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+
+                                            <!-- 👉 当 IsConnected = True 时显示 已连接 -->
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                                    <Setter Property="Text">
+                                                        <Setter.Value>
+                                                            <MultiBinding StringFormat="设备：{0}  状态：🔗">
+                                                                <Binding Path="Name" />
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock
                   Text="{Binding Mac, StringFormat={}Mac地址：{0}}"
                   FontSize="12"
                   Foreground="Gray"

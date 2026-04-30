@@ -38,14 +38,20 @@ namespace SplusXBTMeter
         /// <summary>
         /// 获取值
         /// </summary>
-        public string? getVal(string section, string? key = null, string? defaultValue = null)
+        public string? getVal(string section, string? key = null, string? defaultValue = "")
         {
             if (!has_section(section) || key == null)
                 return defaultValue;
 
             if (!has_option(section, key))
                 return defaultValue;
-            return _config[section][key];
+            string val = _config[section][key];
+            if (val == null || val == "")
+            {
+                val = defaultValue;
+            }
+
+            return val;
         }
 
         /// <summary>

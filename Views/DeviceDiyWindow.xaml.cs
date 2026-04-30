@@ -1,5 +1,4 @@
 #nullable enable
-using SplusXBTMeter;
 using SplusXBTMeter.ViewModels;
 using System.Windows;
 

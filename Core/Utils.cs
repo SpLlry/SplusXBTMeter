@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Policy;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows;
-using System.IO;
 namespace SplusXBTMeter.Core
 {
     internal class Utils
@@ -25,33 +19,36 @@ namespace SplusXBTMeter.Core
         public static double GetDpiScale(Window window)
         {
             if (window == null) return 1.0;
-            var hwnd = new WindowInteropHelper(window).Handle;
+            _ = new WindowInteropHelper(window).Handle;
             var dpi = VisualTreeHelper.GetDpi(window);
             return dpi.DpiScaleX; // 水平缩放比例（1.0 / 1.25 / 1.5 / 2.0）
         }
-        public static TaskBarInfo GetTaskBarInfo() {
-            IntPtr hTaskbar = Win32Api.FindWindow("Shell_TrayWnd", "");
-          
+        public static TaskBarInfo GetTaskBarInfo()
+        {
+            IntPtr hTaskbar = Win32Api.FindWindowW("Shell_TrayWnd", "");
+
             Console.WriteLine($"找到任务栏主窗口句柄：{hTaskbar}");
             Console.WriteLine(hTaskbar == IntPtr.Zero);
             if (hTaskbar == IntPtr.Zero) return default;
             int TaskBarAlignment = GetTaskbarAlignment();
             Console.WriteLine($"{TaskBarAlignment}");
             IntPtr h1 = hTaskbar;
-            if (TaskBarAlignment ==0)
+            if (TaskBarAlignment == 0)
             {
                 //靠左对齐  要取TrayNotifyWnd的区域位置 让任务栏显示区域在靠近托盘的地方
-                 h1 = Win32Api.FindWindowEx(hTaskbar, IntPtr.Zero, "TrayNotifyWnd", "");
+                h1 = Win32Api.FindWindowEx(hTaskbar, IntPtr.Zero, "TrayNotifyWnd", "");
                 Console.WriteLine($"找到TrayNotifyWnd：{h1}");
-            }  
-            
+            }
+
             Win32Api.GetWindowRect(h1, out Win32Api.RECT containerRect);
-            TaskBarInfo taskBarInfo= new TaskBarInfo();
-            taskBarInfo.hwnd = hTaskbar;
-            taskBarInfo.Left = containerRect.Left;
-            taskBarInfo.Top = containerRect.Top;
-            taskBarInfo.Right = containerRect.Right;
-            taskBarInfo.Bottom = containerRect.Bottom;
+            TaskBarInfo taskBarInfo = new()
+            {
+                hwnd = hTaskbar,
+                Left = containerRect.Left,
+                Top = containerRect.Top,
+                Right = containerRect.Right,
+                Bottom = containerRect.Bottom
+            };
             return taskBarInfo;
         }
 
@@ -67,12 +64,14 @@ namespace SplusXBTMeter.Core
         /// 获取任务栏对齐方式（0=左对齐，1=居中）
         /// </summary>
         /// <returns>读取到的值</returns>
-        public static int GetTaskbarAlignment() {
+        public static int GetTaskbarAlignment()
+        {
 
             string reg_path = @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced";
             string reg_key = "TaskbarAl";
-            if (IsWindows10()) { 
-              return 0; // Windows 10默认左对齐
+            if (IsWindows10())
+            {
+                return 0; // Windows 10默认左对齐
             }
             object value = GetRegValue(reg_path, reg_key, "0");
             return Convert.ToInt32(value);
@@ -100,8 +99,7 @@ namespace SplusXBTMeter.Core
 
                 // 2. 先获取数据长度
                 int dataSize = 0;
-                int type;
-                result = Win32Api.RegQueryValueExW(hKey, reg_key, 0, out type, null, ref dataSize);
+                result = Win32Api.RegQueryValueExW(hKey, reg_key, 0, out int type, null, ref dataSize);
                 if (result != 0)
                 {
                     // 键名不存在
@@ -133,7 +131,7 @@ namespace SplusXBTMeter.Core
             {
                 // 无论成败，关闭注册表句柄
                 if (hKey != IntPtr.Zero)
-                    Win32Api.RegCloseKey(hKey);
+                    _ = Win32Api.RegCloseKey(hKey);
             }
         }
         public static IntPtr GetWpfWindowHwnd(Window window)
@@ -215,12 +213,7 @@ namespace SplusXBTMeter.Core
         {
             try
             {
-                Type shellType = Type.GetTypeFromProgID("WScript.Shell");
-                if (shellType == null)
-                {
-                    throw new Exception("无法创建 WScript.Shell 对象");
-                }
-
+                Type shellType = Type.GetTypeFromProgID("WScript.Shell") ?? throw new Exception("无法创建 WScript.Shell 对象");
                 dynamic shell = Activator.CreateInstance(shellType);
                 dynamic shortcut = shell.CreateShortcut(shortcutPath);
 
@@ -268,7 +261,7 @@ namespace SplusXBTMeter.Core
         {
             try
             {
-                IntPtr taskbarContainerHwnd = Win32Api.FindWindow("Shell_TrayWnd", "");
+                IntPtr taskbarContainerHwnd = Win32Api.FindWindowW("Shell_TrayWnd", "");
                 if (taskbarContainerHwnd == IntPtr.Zero)
                 {
                     Console.WriteLine("未找到任务栏容器！");
@@ -359,6 +352,7 @@ namespace SplusXBTMeter.Core
                 Console.WriteLine($"从任务栏移除窗口失败：{ex.Message}");
             }
         }
+
     }
-    
+
 }
