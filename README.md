@@ -8,8 +8,6 @@ SplusXBTMeter是一个实用的蓝牙设备电量监控工具,基于c#开发,通
 密码:cn27
 
 ### 1.2开源地址
-* GitHub:[https://github.com/SpLlry/BTPowerNotice/](https://github.com/SpLlry/BTPowerNotice/)
-* Gitee:[https://gitee.com/spllr/BTPowerNotice/](https://gitee.com/spllr/BTPowerNotice/)
 * GitHub:[https://github.com/SpLlry/SplusXBTMeter](https://github.com/SpLlry/SplusXBTMeter)
 * Gitee:[https://gitee.com/spllr/SplusXBTMeter](https://gitee.com/spllr/SplusXBTMeter)
 
@@ -102,9 +100,9 @@ SplusXBTMeter是一个实用的蓝牙设备电量监控工具,基于c#开发,通
 ## 捐赠:
 **[赞助名单](https://www.splusx.com/sponsor.html)**
 
-<div>开发维护不易，请我喝杯可乐吧~(请附上您的GitHub用户名或QQ等联系方式,感谢您的支持)</div>
+<div>开发维护不易，请我喝杯可乐吧~</div>
 
-爱发电：[https://ifdian.net/a/BTPowerNotice](https://ifdian.net/a/BTPowerNotice)
+
 
 | 支付宝                                  | 微信                                      |
 |--------------------------------------|-----------------------------------------|
