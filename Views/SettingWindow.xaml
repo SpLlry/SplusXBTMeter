@@ -84,6 +84,21 @@
 
   />
                     <hc:Divider
+            Content="通知提示"
+            HorizontalContentAlignment="Left"
+            Height="24"
+            Margin="10,5,10,0"
+          />
+                    <CheckBox
+      x:Name="IsShowDevChangeNotice"
+      Content="设备变化通知"
+      Margin="10,5,10,0"
+      VerticalAlignment="Top"
+      Height="24"
+      Click="IsShowDevChangeNotice_Checked"
+            IsChecked="{Binding IsShowDevChangeNotice}" Checked="IsShowDevChangeNotice_Checked"
+    />
+                    <hc:Divider
             Content="启动设置"
             HorizontalContentAlignment="Left"
             Height="24"

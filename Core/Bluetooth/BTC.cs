@@ -37,12 +37,33 @@ namespace SplusXBTMeter.Core.Bluetooth
             public GUID fmtid;
             public uint pid;
         }
+        [StructLayout(LayoutKind.Sequential)]
+        private struct SP_DEVINFO_DATA
+        {
+            public int cbSize;
+            public GUID ClassGuid;
+            public uint DevInst;
+            public IntPtr Reserved;
+        }
         #endregion
 
         #region Windows API 导入
         private const uint CM_LOCATE_DEVNODE_NORMAL = 0x00000000;
         private const uint CR_SUCCESS = 0x00000000;
+            private const int DIGCF_PRESENT = 0x00000002;
+        private static readonly IntPtr INVALID_HANDLE_VALUE = new(-1);
+                private static readonly GUID GUID_DEVCLASS_SYSTEM = new(0x4D36E97D, 0xE325, 0x11CE, new byte[] { 0xBF, 0xC1, 0x08, 0x00, 0x2B, 0xE1, 0x03, 0x18 });
+        [DllImport("Setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr SetupDiGetClassDevsW(ref GUID ClassGuid, string? Enumerator, IntPtr hwndParent, int Flags);
 
+        [DllImport("Setupapi.dll", SetLastError = true)]
+        private static extern bool SetupDiEnumDeviceInfo(IntPtr DeviceInfoSet, int MemberIndex, ref SP_DEVINFO_DATA DeviceInfoData);
+
+        [DllImport("Setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool SetupDiGetDeviceInstanceIdW(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, char[] DeviceInstanceId, int InstanceIdSize, out int RequiredSize);
+
+        [DllImport("Setupapi.dll")]
+        private static extern bool SetupDiDestroyDeviceInfoList(IntPtr DeviceInfoSet);
         // 🔥 修复：去掉 readonly，解决 ref 参数报错
         private static DEVPROPKEY DEVPKEY_BLUETOOTH_BATTERY = new()
         {
@@ -89,7 +110,7 @@ namespace SplusXBTMeter.Core.Bluetooth
 
                         if (connected)
                         {
-                            battery = GetBatteryLevel(dev.Id);
+                            battery = GetBatteryLevel(mac);
                             Debug.WriteLine($"电量：{battery}%");
                             UpdateCache(dev.Id, battery);
                         }
@@ -119,13 +140,59 @@ namespace SplusXBTMeter.Core.Bluetooth
             Debug.WriteLine($"BTCresult{result}");
             return result;
         }
+        // ====================== 【仅新增】获取蓝牙设备实例ID 方法 ======================
+        private static string GetBluetoothInstanceId(string bluetoothMac)
+        {
+            IntPtr hDevInfo = INVALID_HANDLE_VALUE;
+            try
+            {
+                GUID classGuid = GUID_DEVCLASS_SYSTEM;
+                hDevInfo = SetupDiGetClassDevsW(ref classGuid, null, IntPtr.Zero, DIGCF_PRESENT);
+                if (hDevInfo == INVALID_HANDLE_VALUE) return string.Empty;
+
+                SP_DEVINFO_DATA devInfo = new();
+                devInfo.cbSize = Marshal.SizeOf(devInfo);
+                int index = 0;
+
+                while (SetupDiEnumDeviceInfo(hDevInfo, index, ref devInfo))
+                {
+                    index++;
+                    char[] buffer = new char[256];
+                    if (SetupDiGetDeviceInstanceIdW(hDevInfo, ref devInfo, buffer, buffer.Length, out _))
+                    {
+                        string instanceId = new string(buffer).TrimEnd('\0');
+                        //Debug.WriteLine($"instanceId{instanceId}---{bluetoothMac}");
+                        if (instanceId.Contains("BTHENUM\\") && instanceId.Contains(bluetoothMac))
+                        {
+                            return instanceId;
+                        }
+                    }
+                }
+                return string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+            finally
+            {
+                if (hDevInfo != INVALID_HANDLE_VALUE)
+                    SetupDiDestroyDeviceInfoList(hDevInfo);
+            }
+        }
 
         private static int GetBatteryLevel(string deviceId)
         {
             try
             {
-                if (CM_Locate_DevNodeW(out uint devNode, deviceId, CM_LOCATE_DEVNODE_NORMAL) != CR_SUCCESS)
+                string instance_id = GetBluetoothInstanceId(deviceId);
+                uint DevNodeRet = CM_Locate_DevNodeW(out uint devNode, instance_id, CM_LOCATE_DEVNODE_NORMAL);
+                if (DevNodeRet != CR_SUCCESS)
+                {
+                    Debug.WriteLine($"CM_Locate_DevNodeW：{deviceId}-{instance_id}");
                     return 0;
+                }
+            
 
                 byte battery = 0;
                 uint propSize = (uint)Marshal.SizeOf(battery);
@@ -137,7 +204,9 @@ namespace SplusXBTMeter.Core.Bluetooth
                     return Math.Clamp((int)battery, 0, 100);
                 }
             }
-            catch { }
+            catch {
+              Debug.WriteLine($"获取电量异常：{deviceId}");
+            }
             return 0;
         }
 

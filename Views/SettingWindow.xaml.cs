@@ -97,6 +97,15 @@ namespace SplusXBTMeter
             }
         }
 
+        private void IsShowDevChangeNotice_Checked(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel != null)
+            {
+                var checkBox = sender as System.Windows.Controls.CheckBox;
+                _viewModel.IsShowDevChangeNotice = checkBox?.IsChecked == true;
+            }
+        }
 
+       
     }
 }

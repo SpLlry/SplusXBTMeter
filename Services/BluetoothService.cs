@@ -1,5 +1,6 @@
 using SplusXBTMeter.Core;
 using SplusXBTMeter.Services.Interfaces;
+using System.Text.Json;
 
 namespace SplusXBTMeter.Services
 {
@@ -44,9 +45,10 @@ namespace SplusXBTMeter.Services
             {
                 var newDevices = await _btScan.GetAllBluetoothDevicesBatteryAsync();
                 bool IsShowNoconn = App.Config.getVal("settings", "ShowNoConn", "1") == "1";
+                Console.WriteLine($"设备{JsonSerializer.Serialize(newDevices)}");
                 for (int i = 0; i < newDevices.Count; i++)
                 {
-
+                  
                     string Mac = newDevices[i].Mac;
                     string Name = newDevices[i].Name;
                     bool IsConnected = newDevices[i].IsConnected;

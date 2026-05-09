@@ -14,6 +14,7 @@ namespace SplusXBTMeter.ViewModels
         private bool _isStartup;
         private bool _isShowTaskBar;
         private bool _isShowMain;
+        private bool _isShowDevChangeNotice;
         private bool _isShowNoConn;
 
         public ObservableCollection<Core.DeviceBatteryInfo>? BluetoothDevices
@@ -108,6 +109,17 @@ namespace SplusXBTMeter.ViewModels
                 }
             }
         }
+        public bool IsShowDevChangeNotice
+        {
+            get => _isShowDevChangeNotice;
+            set
+            {
+                if (SetProperty(ref _isShowDevChangeNotice, value))
+                {
+                    App.Config.setVal("Settings", "ShowDevChangeNotice", value ? "1" : "0");
+                }
+            }
+        }
 
         public SettingViewModel()
         {
@@ -119,8 +131,8 @@ namespace SplusXBTMeter.ViewModels
             IsStartup = Utils.IsSelfStart("SplusXBTMeter");
             IsShowTaskBar = App.Config.getVal("Settings", "TaskBarWindow", "0") == "1";
             IsShowMain = App.Config.getVal("Settings", "MainWindow", "0") == "1";
-            SelectedSkin = App.Config.getVal("settings", "skin", "Default") ?? "";
-
+            SelectedSkin = App.Config.getVal("settings", "skin", "Default") ?? "Default";
+            IsShowDevChangeNotice= App.Config.getVal("Settings", "ShowDevChangeNotice", "1") == "1";
             var latestEvent = EventBus.GetLatest<DeviceListUpdatedEvent>();
             if (latestEvent != null)
             {
