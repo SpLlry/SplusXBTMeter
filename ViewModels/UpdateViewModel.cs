@@ -2,8 +2,8 @@ using SplusXBTMeter.ViewModels.Base;
 
 public class UpdateViewModel : ViewModelBase
 {
-    private string _updateText;
-    private string _updateUrl;
+    private string  _updateText ="";
+    private string  _updateUrl ="";
 
     public string UpdateText
     {
@@ -13,7 +13,7 @@ public class UpdateViewModel : ViewModelBase
 
     public string UpdateUrl
     {
-        get => UpdateUrl;
+        get => _updateUrl;
         set => SetProperty(ref _updateUrl, value);
     }
 
